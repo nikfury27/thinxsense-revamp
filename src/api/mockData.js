@@ -1,0 +1,218 @@
+// Mock Database for Thinxsense IoT Platform with Feature Enhancements
+
+export const initialGroups = [
+  { sno: 1, name: 'werrrsdsddf', desc: 'Main storage cooling', registered: '16-06-2026, 15:49', location: 'Cold Room 1' },
+  { sno: 2, name: 'co2sdasdf', desc: 'Carbon dioxide & temp sensors', registered: '24-04-2026, 11:28', location: 'Lab Area A' },
+  { sno: 3, name: 'wewe', desc: 'Raw material storage', registered: '02-03-2026, 10:51', location: 'Cold Room 3' },
+  { sno: 4, name: 'alert1', desc: 'Vaccine storage facility', registered: '27-01-2026, 15:08', location: 'Cold Room 2' },
+  { sno: 5, name: 'Group', desc: 'General facility monitors', registered: '21-01-2026, 16:49', location: 'Loading Dock' }
+];
+
+export const initialUsers = [
+  { sno: 1, name: 'shwetha', role: 'ADMIN', email: 'shwetha@thinxsense.com', registered: '12-01-2026' }
+];
+
+export const initialGateways = [
+  {
+    id: 'GGWCL00060',
+    status: 'offline',
+    signal: -85,
+    ip: 'Unknown',
+    uptime: '0h',
+    properties: {
+      "Gateway": "GGWCL00060",
+      "Internal temp sensor enable": "1",
+      "Powered by": "mains",
+      "Ble1 enable": "1",
+      "Battery": "94",
+      "Ble2 enable": "1",
+      "Last updated": "29 Jun 2026, 16:26:17",
+      "LR enable": "1",
+      "Firmware version": "1.0.13",
+      "IMEI": "No Data",
+      "Hardware version": "1.1",
+      "SIM CCID": "No Data",
+      "GPS enabled": "1",
+      "Packet number": "42248",
+      "Mod bus enabled": "0",
+      "Communication mode": "MQTTS",
+      "Charging status": "Not_Charging",
+      "Wifi enable": "1",
+      "Cellular enable": "0",
+      "Ethernet enable": "0"
+    }
+  },
+  {
+    id: 'GGWCL00061',
+    status: 'online',
+    signal: -72,
+    ip: '192.168.1.105',
+    uptime: '14d 1h',
+    properties: {
+      "Gateway": "GGWCL00061",
+      "Internal temp sensor enable": "1",
+      "Powered by": "mains",
+      "Ble1 enable": "1",
+      "Battery": "88",
+      "Ble2 enable": "1",
+      "Last updated": "29 Jun 2026, 16:30:00",
+      "LR enable": "1",
+      "Firmware version": "1.0.13",
+      "IMEI": "860432123456789",
+      "Hardware version": "1.1",
+      "SIM CCID": "8901234567890123456",
+      "GPS enabled": "1",
+      "Packet number": "45981",
+      "Mod bus enabled": "0",
+      "Communication mode": "MQTTS",
+      "Charging status": "Charging",
+      "Wifi enable": "1",
+      "Cellular enable": "1",
+      "Ethernet enable": "0"
+    }
+  }
+];
+
+// Generate mock temperature/humidity history for time-series charts
+const generateHistory = (baseTemp, baseHum) => {
+  const history = [];
+  const now = new Date();
+  for (let i = 24; i >= 0; i--) {
+    const time = new Date(now.getTime() - i * 60 * 60 * 1000);
+    const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    history.push({
+      time: timeString,
+      temp: parseFloat((baseTemp + (Math.random() - 0.5) * 1.5).toFixed(1)),
+      hum: parseFloat((baseHum + (Math.random() - 0.5) * 3).toFixed(1))
+    });
+  }
+  return history;
+};
+
+export const initialSensors = [
+  // H9B00008 (Room A in our example - Cold Room 1, Rack A)
+  { id: 'H9B00008', name: 'H9B00008', temp: 24.5, hum: 37.0, batt: 94, lastSeen: '2 mins ago', status: 'online', group: 'werrrsdsddf', location: 'Cold Room 1, Rack A', history: generateHistory(24, 37), uptimeScore: 99.8, complianceScore: 99.1 },
+  { id: 'H9B00012', name: 'H9B00012', temp: 24.1, hum: 42.5, batt: 88, lastSeen: '5 mins ago', status: 'online', group: 'co2sdasdf', location: 'Lab Area A, Table 2', history: generateHistory(24, 42), uptimeScore: 98.5, complianceScore: 95.0 },
+  
+  // H9B00045 (Room B in our example - Cold Room 2, Rack 3 - Severe Dev)
+  { id: 'H9B00045', name: 'H9B00045', temp: 31.2, hum: 88.0, batt: 12, lastSeen: '1 min ago', status: 'warning', group: 'alert1', location: 'Cold Room 2, Rack 3', history: generateHistory(30, 85), uptimeScore: 99.9, complianceScore: 68.4 },
+  
+  // H9B00046 & H9B00047: Neighboring sensors in the same group (alert1 - Cold Room 2) to validate Neighbour Validation
+  { id: 'H9B00046', name: 'H9B00046', temp: 24.1, hum: 41.2, batt: 91, lastSeen: '3 mins ago', status: 'online', group: 'alert1', location: 'Cold Room 2, Rack 4', history: generateHistory(24, 40), uptimeScore: 99.7, complianceScore: 99.8 },
+  { id: 'H9B00047', name: 'H9B00047', temp: 23.8, hum: 39.8, batt: 95, lastSeen: '4 mins ago', status: 'online', group: 'alert1', location: 'Cold Room 2, Rack 2', history: generateHistory(23, 40), uptimeScore: 100.0, complianceScore: 100.0 },
+
+  { id: 'H9B00022', name: 'H9B00022', temp: 22.0, hum: 30.1, batt: 100, lastSeen: '1 hr ago', status: 'offline', group: 'wewe', location: 'Cold Room 3, Shelf B', history: generateHistory(22, 30), uptimeScore: 78.2, complianceScore: 92.0 },
+  { id: 'H9B00067', name: 'H9B00067', temp: 26.5, hum: 40.2, batt: 76, lastSeen: 'Just now', status: 'online', group: 'Group', location: 'Loading Dock Door', history: generateHistory(26, 40), uptimeScore: 99.4, complianceScore: 98.7 },
+  { id: 'H9B00089', name: 'H9B00089', temp: 27.8, hum: 39.5, batt: 82, lastSeen: '10 mins ago', status: 'online', group: 'Group', location: 'Loading Dock Freezer', history: generateHistory(27, 39), uptimeScore: 99.6, complianceScore: 99.2 },
+  
+  // Offline sensors
+  { id: 'BRR00001', name: 'BRR00001', temp: 20.1, hum: 35.0, batt: 92, lastSeen: '12 mins ago', status: 'offline', group: 'werrrsdsddf', location: 'Cold Room 1, Rack B', history: [], uptimeScore: 0.0, complianceScore: 0.0 },
+  { id: 'BRR00002', name: 'BRR00002', temp: 21.3, hum: 36.2, batt: 75, lastSeen: '40 mins ago', status: 'offline', group: 'co2sdasdf', location: 'Lab Area A, Table 3', history: [], uptimeScore: 40.5, complianceScore: 90.0 },
+  { id: 'BRR00003', name: 'BRR00003', temp: 29.6, hum: 39.0, batt: 84, lastSeen: 'Just now', status: 'offline', group: 'wewe', location: 'Cold Room 3, Shelf A', history: [], uptimeScore: 0.0, complianceScore: 0.0 },
+  { id: 'BRR00004', name: 'BRR00004', temp: 22.5, hum: 41.0, batt: 63, lastSeen: '2 hrs ago', status: 'offline', group: 'alert1', location: 'Cold Room 2, Rack 1', history: [], uptimeScore: 50.1, complianceScore: 94.0 },
+  { id: 'BRR00005', name: 'BRR00005', temp: 29.9, hum: 37.0, batt: 50, lastSeen: '1 day ago', status: 'offline', group: 'Group', location: 'Loading Dock Desk', history: [], uptimeScore: 89.2, complianceScore: 95.0 }
+];
+
+export const initialAlerts = [
+  // Severe deviation in Room B (Cold Room 2) - high ESI (Duration: 45m, Max Deviation: 6.2°C -> ESI: 279)
+  { 
+    id: 'ALT-9921', 
+    sensor: 'H9B00045', 
+    sensorName: 'H9B00045', 
+    time: '5/26/2026, 3:10:00 PM', 
+    param: 'Temperature', 
+    val: '31.2', 
+    threshold: '> 25°C', 
+    state: 'unacknowledged', 
+    arrow: 'upward', 
+    humVal: '88',
+    deviation: 6.2, 
+    duration: 45, 
+    location: 'Cold Room 2, Rack 3',
+    room: 'Room B (Severe Excursion)'
+  },
+  
+  // Room A (Cold Room 1) spikes - low ESI (Duration: 5m, Max Deviation: 0.5°C -> ESI: 2.5)
+  { 
+    id: 'ALT-9001', 
+    sensor: 'H9B00008', 
+    sensorName: 'H9B00008', 
+    time: '5/26/2026, 3:10:00 PM', 
+    param: 'Temperature', 
+    val: '25.5', 
+    threshold: '> 25°C', 
+    state: 'unacknowledged', 
+    arrow: 'upward', 
+    humVal: '40',
+    deviation: 0.5, 
+    duration: 5, 
+    location: 'Cold Room 1, Rack A',
+    room: 'Room A (Minor Spikes)'
+  },
+  { 
+    id: 'ALT-9002', 
+    sensor: 'H9B00008', 
+    sensorName: 'H9B00008', 
+    time: '5/26/2026, 2:55:00 PM', 
+    param: 'Temperature', 
+    val: '25.4', 
+    threshold: '> 25°C', 
+    state: 'unacknowledged', 
+    arrow: 'upward', 
+    humVal: '39',
+    deviation: 0.4, 
+    duration: 6, 
+    location: 'Cold Room 1, Rack A',
+    room: 'Room A (Minor Spikes)'
+  },
+  { 
+    id: 'ALT-9003', 
+    sensor: 'H9B00008', 
+    sensorName: 'H9B00008', 
+    time: '5/26/2026, 2:40:00 PM', 
+    param: 'Temperature', 
+    val: '25.6', 
+    threshold: '> 25°C', 
+    state: 'unacknowledged', 
+    arrow: 'upward', 
+    humVal: '39',
+    deviation: 0.6, 
+    duration: 4, 
+    location: 'Cold Room 1, Rack A',
+    room: 'Room A (Minor Spikes)'
+  },
+
+  // Other historical / mock alerts
+  { 
+    id: 'ALT-9920', 
+    sensor: 'H9B00045', 
+    sensorName: 'H9B00045', 
+    time: '5/26/2026, 3:05:00 PM', 
+    param: 'Humidity', 
+    val: '88.0', 
+    threshold: '> 80%', 
+    state: 'acknowledged', 
+    arrow: 'upward', 
+    humVal: '88',
+    deviation: 8.0,
+    duration: 20,
+    location: 'Cold Room 2, Rack 3',
+    room: 'Room B (Severe Excursion)'
+  },
+  { 
+    id: 'ALT-9850', 
+    sensor: 'H9B00022', 
+    sensorName: 'H9B00022', 
+    time: '5/26/2026, 2:40:00 PM', 
+    param: 'Connection', 
+    val: 'Timeout', 
+    threshold: 'N/A', 
+    state: 'unacknowledged', 
+    arrow: 'none', 
+    humVal: '-',
+    deviation: 0,
+    duration: 120,
+    location: 'Cold Room 3, Shelf B',
+    room: 'Cold Room 3'
+  }
+];

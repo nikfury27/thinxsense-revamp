@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+  background: #c4c5d6; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0; 
+}
+
+/* Custom scrollbar for table */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: white;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #c4c5d6;
+  border-radius: 4px;
+}
+
+/* Grid lines pattern for graph background */
+.grid-lines {
+  background-image: linear-gradient(#c4c5d6 1px, transparent 1px), linear-gradient(90deg, #c4c5d6 1px, transparent 1px);
+  background-size: 40px 40px;
+}
