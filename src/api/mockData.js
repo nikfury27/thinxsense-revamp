@@ -91,26 +91,26 @@ const generateHistory = (baseTemp, baseHum) => {
 
 export const initialSensors = [
   // H9B00008 (Room A in our example - Cold Room 1, Rack A)
-  { id: 'H9B00008', name: 'H9B00008', temp: 24.5, hum: 37.0, batt: 94, lastSeen: '2 mins ago', status: 'online', group: 'werrrsdsddf', location: 'Cold Room 1, Rack A', history: generateHistory(24, 37), uptimeScore: 99.8, complianceScore: 99.1 },
-  { id: 'H9B00012', name: 'H9B00012', temp: 24.1, hum: 42.5, batt: 88, lastSeen: '5 mins ago', status: 'online', group: 'co2sdasdf', location: 'Lab Area A, Table 2', history: generateHistory(24, 42), uptimeScore: 98.5, complianceScore: 95.0 },
+  { id: 'H9B00008', name: 'H9B00008', temp: 24.5, hum: 37.0, batt: 94, lastSeen: '2 mins ago', status: 'online', group: 'werrrsdsddf', location: 'Cold Room 1, Rack A', history: generateHistory(24, 37), complianceScore: 99.1 },
+  { id: 'H9B00012', name: 'H9B00012', temp: 24.1, hum: 42.5, batt: 88, lastSeen: '5 mins ago', status: 'online', group: 'co2sdasdf', location: 'Lab Area A, Table 2', history: generateHistory(24, 42), complianceScore: 95.0 },
   
   // H9B00045 (Room B in our example - Cold Room 2, Rack 3 - Severe Dev)
-  { id: 'H9B00045', name: 'H9B00045', temp: 31.2, hum: 88.0, batt: 12, lastSeen: '1 min ago', status: 'warning', group: 'alert1', location: 'Cold Room 2, Rack 3', history: generateHistory(30, 85), uptimeScore: 99.9, complianceScore: 68.4 },
+  { id: 'H9B00045', name: 'H9B00045', temp: 31.2, hum: 88.0, batt: 12, lastSeen: '1 min ago', status: 'warning', group: 'alert1', location: 'Cold Room 2, Rack 3', history: generateHistory(30, 85), complianceScore: 68.4 },
   
   // H9B00046 & H9B00047: Neighboring sensors in the same group (alert1 - Cold Room 2) to validate Neighbour Validation
-  { id: 'H9B00046', name: 'H9B00046', temp: 24.1, hum: 41.2, batt: 91, lastSeen: '3 mins ago', status: 'online', group: 'alert1', location: 'Cold Room 2, Rack 4', history: generateHistory(24, 40), uptimeScore: 99.7, complianceScore: 99.8 },
-  { id: 'H9B00047', name: 'H9B00047', temp: 23.8, hum: 39.8, batt: 95, lastSeen: '4 mins ago', status: 'online', group: 'alert1', location: 'Cold Room 2, Rack 2', history: generateHistory(23, 40), uptimeScore: 100.0, complianceScore: 100.0 },
+  { id: 'H9B00046', name: 'H9B00046', temp: 24.1, hum: 41.2, batt: 91, lastSeen: '3 mins ago', status: 'online', group: 'alert1', location: 'Cold Room 2, Rack 4', history: generateHistory(24, 40), complianceScore: 99.8 },
+  { id: 'H9B00047', name: 'H9B00047', temp: 23.8, hum: 39.8, batt: 95, lastSeen: '4 mins ago', status: 'online', group: 'alert1', location: 'Cold Room 2, Rack 2', history: generateHistory(23, 40), complianceScore: 100.0 },
 
-  { id: 'H9B00022', name: 'H9B00022', temp: 22.0, hum: 30.1, batt: 100, lastSeen: '1 hr ago', status: 'offline', group: 'wewe', location: 'Cold Room 3, Shelf B', history: generateHistory(22, 30), uptimeScore: 78.2, complianceScore: 92.0 },
-  { id: 'H9B00067', name: 'H9B00067', temp: 26.5, hum: 40.2, batt: 76, lastSeen: 'Just now', status: 'online', group: 'Group', location: 'Loading Dock Door', history: generateHistory(26, 40), uptimeScore: 99.4, complianceScore: 98.7 },
-  { id: 'H9B00089', name: 'H9B00089', temp: 27.8, hum: 39.5, batt: 82, lastSeen: '10 mins ago', status: 'online', group: 'Group', location: 'Loading Dock Freezer', history: generateHistory(27, 39), uptimeScore: 99.6, complianceScore: 99.2 },
+  { id: 'H9B00022', name: 'H9B00022', temp: 22.0, hum: 30.1, batt: 100, lastSeen: '1 hr ago', status: 'offline', group: 'wewe', location: 'Cold Room 3, Shelf B', history: generateHistory(22, 30), complianceScore: 92.0 },
+  { id: 'H9B00067', name: 'H9B00067', temp: 26.5, hum: 40.2, batt: 76, lastSeen: 'Just now', status: 'online', group: 'Group', location: 'Loading Dock Door', history: generateHistory(26, 40), complianceScore: 98.7 },
+  { id: 'H9B00089', name: 'H9B00089', temp: 27.8, hum: 39.5, batt: 82, lastSeen: '10 mins ago', status: 'online', group: 'Group', location: 'Loading Dock Freezer', history: generateHistory(27, 39), complianceScore: 99.2 },
   
   // Offline sensors
-  { id: 'BRR00001', name: 'BRR00001', temp: 20.1, hum: 35.0, batt: 92, lastSeen: '12 mins ago', status: 'offline', group: 'werrrsdsddf', location: 'Cold Room 1, Rack B', history: [], uptimeScore: 0.0, complianceScore: 0.0 },
-  { id: 'BRR00002', name: 'BRR00002', temp: 21.3, hum: 36.2, batt: 75, lastSeen: '40 mins ago', status: 'offline', group: 'co2sdasdf', location: 'Lab Area A, Table 3', history: [], uptimeScore: 40.5, complianceScore: 90.0 },
-  { id: 'BRR00003', name: 'BRR00003', temp: 29.6, hum: 39.0, batt: 84, lastSeen: 'Just now', status: 'offline', group: 'wewe', location: 'Cold Room 3, Shelf A', history: [], uptimeScore: 0.0, complianceScore: 0.0 },
-  { id: 'BRR00004', name: 'BRR00004', temp: 22.5, hum: 41.0, batt: 63, lastSeen: '2 hrs ago', status: 'offline', group: 'alert1', location: 'Cold Room 2, Rack 1', history: [], uptimeScore: 50.1, complianceScore: 94.0 },
-  { id: 'BRR00005', name: 'BRR00005', temp: 29.9, hum: 37.0, batt: 50, lastSeen: '1 day ago', status: 'offline', group: 'Group', location: 'Loading Dock Desk', history: [], uptimeScore: 89.2, complianceScore: 95.0 }
+  { id: 'BRR00001', name: 'BRR00001', temp: 20.1, hum: 35.0, batt: 92, lastSeen: '12 mins ago', status: 'offline', group: 'werrrsdsddf', location: 'Cold Room 1, Rack B', history: [], complianceScore: 0.0 },
+  { id: 'BRR00002', name: 'BRR00002', temp: 21.3, hum: 36.2, batt: 75, lastSeen: '40 mins ago', status: 'offline', group: 'co2sdasdf', location: 'Lab Area A, Table 3', history: [], complianceScore: 90.0 },
+  { id: 'BRR00003', name: 'BRR00003', temp: 29.6, hum: 39.0, batt: 84, lastSeen: 'Just now', status: 'offline', group: 'wewe', location: 'Cold Room 3, Shelf A', history: [], complianceScore: 0.0 },
+  { id: 'BRR00004', name: 'BRR00004', temp: 22.5, hum: 41.0, batt: 63, lastSeen: '2 hrs ago', status: 'offline', group: 'alert1', location: 'Cold Room 2, Rack 1', history: [], complianceScore: 94.0 },
+  { id: 'BRR00005', name: 'BRR00005', temp: 29.9, hum: 37.0, batt: 50, lastSeen: '1 day ago', status: 'offline', group: 'Group', location: 'Loading Dock Desk', history: [], complianceScore: 95.0 }
 ];
 
 export const initialAlerts = [

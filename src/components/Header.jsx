@@ -162,9 +162,9 @@ const Header = () => {
                 <div className="p-3 bg-green-500/5 border border-green-500/20 rounded-lg flex gap-3 items-start text-xs">
                   <span className="material-symbols-outlined text-status-success font-bold mt-0.5">check_circle</span>
                   <div>
-                    <span className="font-bold text-status-success">Logging Coverage Verified</span>
+                    <span className="font-bold text-status-success">Facility Compliance Verified</span>
                     <p className="text-on-surface-variant mt-0.5">
-                      Total logging uptime score stands at **99.5%** with overall facility temperature compliance at **98.2%**.
+                      Overall facility temperature compliance is verified at **98.2%** for the active shift window.
                     </p>
                   </div>
                 </div>

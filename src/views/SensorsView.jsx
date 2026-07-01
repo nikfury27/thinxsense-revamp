@@ -297,25 +297,19 @@ const SensorsView = () => {
                 </div>
               </div>
 
-              {/* Coverage & Uptime Twin Metrics (New Feature) */}
-              <div className="bg-primary/[0.02] border border-primary/10 rounded-lg p-3 flex flex-col justify-between">
-                <div className="grid grid-cols-2 gap-2 text-center">
-                  <div className="border-r border-outline-variant/50">
-                    <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Continuous Logging Uptime</span>
-                    <strong className="text-lg font-mono text-primary">{selectedSensor.uptimeScore}%</strong>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Threshold Compliance</span>
-                    <strong className={`text-lg font-mono ${
-                      selectedSensor.complianceScore > 95 ? 'text-status-success' : 'text-error'
-                    }`}>{selectedSensor.complianceScore}%</strong>
-                  </div>
+              {/* Threshold Compliance Card */}
+              <div className="bg-primary/[0.02] border border-primary/10 rounded-lg p-3 flex flex-col justify-center">
+                <div className="text-center">
+                  <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Threshold Compliance Rating</span>
+                  <strong className={`text-2xl font-mono block mt-1 ${
+                    selectedSensor.complianceScore > 95 ? 'text-status-success' : 'text-error'
+                  }`}>{selectedSensor.complianceScore}%</strong>
                 </div>
                 
-                <div className="text-[9px] text-on-surface-variant leading-normal flex items-start gap-1 mt-2 border-t border-outline-variant/40 pt-1.5">
-                  <span className="material-symbols-outlined text-[12px] text-primary mt-0.5">verified</span>
+                <div className="text-[9px] text-on-surface-variant leading-normal flex items-center justify-center gap-1 mt-2 border-t border-outline-variant/40 pt-1.5">
+                  <span className="material-symbols-outlined text-[12px] text-primary">verified</span>
                   <p>
-                    Surfacing logging uptime ensures that the threshold compliance score is verified by continuous log data, avoiding unrecorded data gap errors.
+                    Represents the percentage of logs captured within safety thresholds.
                   </p>
                 </div>
               </div>
@@ -445,7 +439,7 @@ const SensorsView = () => {
                     <div className="text-emerald-400 mb-2">// Reading sensor metrics payload...</div>
                     <div>[2026-07-01 12:28:15] INFO: Connecting to MQTT broker...</div>
                     <div>[2026-07-01 12:28:17] RECEIVED: {`{"sensor_id":"${selectedSensor.id}","temp":${selectedSensor.temp},"hum":${selectedSensor.hum},"batt":${selectedSensor.batt}}`}</div>
-                    <div>[2026-07-01 12:28:18] INFO: Logging uptime verified: {selectedSensor.uptimeScore}% coverage.</div>
+                    <div>[2026-07-01 12:28:18] INFO: Threshold compliance verified: {selectedSensor.complianceScore}% success.</div>
                   </div>
                 )}
               </div>
