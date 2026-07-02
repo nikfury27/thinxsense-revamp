@@ -232,7 +232,7 @@ const SensorsView = () => {
                         ? 'text-error bg-error/10'
                         : 'text-outline bg-outline-variant/30'
                     }`}>
-                      {sensor.status.toUpperCase()}
+                      {sensor.status === 'warning' ? 'ALERT' : sensor.status.toUpperCase()}
                     </span>
                   </div>
                 </div>
@@ -338,7 +338,7 @@ const SensorsView = () => {
                       <strong className="text-sm font-mono mt-1 block">{selectedSensor.id} : {selectedSensor.temp}°C</strong>
                       <span className={`text-[10px] font-bold uppercase block mt-1 ${
                         selectedSensor.status === 'online' ? 'text-status-green' : 'text-error animate-pulse'
-                      }`}>{selectedSensor.status}</span>
+                      }`}>{selectedSensor.status === 'warning' ? 'ALERT' : selectedSensor.status}</span>
                     </div>
 
                     {/* Neighbors list */}

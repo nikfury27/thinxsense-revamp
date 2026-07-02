@@ -256,9 +256,13 @@ const GroupsView = () => {
                           <td className="py-3 px-6 font-semibold text-primary">{sensor.id}</td>
                           <td className="py-3 px-6 text-center">
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                              sensor.status === 'online' ? 'text-status-green bg-status-green/10' : 'text-error bg-error/10'
+                              sensor.status === 'online' 
+                                ? 'text-status-green bg-status-green/10' 
+                                : sensor.status === 'warning'
+                                ? 'text-error bg-error/10 animate-pulse'
+                                : 'text-outline bg-outline-variant/30'
                             }`}>
-                              {sensor.status.toUpperCase()}
+                              {sensor.status === 'warning' ? 'ALERT' : sensor.status.toUpperCase()}
                             </span>
                           </td>
                           <td className="py-3 px-6 text-center font-mono font-medium">{sensor.temp}°C</td>
