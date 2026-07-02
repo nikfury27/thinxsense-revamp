@@ -49,38 +49,42 @@ const SensorsView = () => {
     return sensors.filter(s => s.group === sensor.group && s.id !== sensor.id);
   };
 
-  // Neighbour validation evaluation logic
+  // Neighbour validation evaluation logic using a 3.0°C deviation threshold
   const evaluateNeighbourValidation = (sensor) => {
-    const neighbors = getNeighbors(sensor);
+    const neighbors = getNeighbors(sensor).filter(n => n.status !== 'offline');
     if (neighbors.length === 0) {
       return {
         status: 'isolated',
-        message: 'No neighboring sensors available in group for comparison.',
-        action: 'Single node monitoring. Confidence rating: Standard.'
+        message: 'No active neighboring sensors available in the same group for comparison.',
+        action: 'Isolated node monitoring. Inspect sensor if alerts persist.'
       };
     }
 
-    const isSensorAbnormal = sensor.status === 'warning' || sensor.temp > 28;
-    const abnormalNeighbors = neighbors.filter(n => n.status === 'warning' || n.temp > 28);
-    const areNeighborsNormal = abnormalNeighbors.length === 0;
+    const neighborAverage = neighbors.reduce((acc, curr) => acc + curr.temp, 0) / neighbors.length;
+    const deviation = Math.abs(sensor.temp - neighborAverage);
+    const DEVIATION_THRESHOLD = 3.0; // 3.0°C deviation limit
 
-    if (isSensorAbnormal && areNeighborsNormal) {
-      return {
-        status: 'fault',
-        message: `Neighbour Mismatch: Sibling sensors in group "${sensor.group}" are reporting normal temperatures (~24°C).`,
-        action: 'Flagged as Local Sensor Fault / Local Hotspot. Room-wide alarm suppressed. Confidence rating: High.'
-      };
-    } else if (isSensorAbnormal && !areNeighborsNormal) {
-      return {
-        status: 'critical',
-        message: `Group Agreement: Sibling sensors in group "${sensor.group}" are also reporting elevated temperatures.`,
-        action: 'Flagged as Verified Facility Excursion. Room-wide cooling failure! Confidence rating: Critical.'
-      };
+    const isBreach = sensor.temp > 25.0; // Threshold breach limit
+
+    if (isBreach) {
+      if (deviation > DEVIATION_THRESHOLD) {
+        return {
+          status: 'fault',
+          message: `Neighbour Mismatch: Selected sensor deviates from neighbor average (${neighborAverage.toFixed(1)}°C) by ${deviation.toFixed(1)}°C (Threshold: 3.0°C).`,
+          action: 'Flagged as Local Hotspot / Faulty Sensor. Action: Inspect space (check for door opening event or sensor calibration).'
+        };
+      } else {
+        return {
+          status: 'critical',
+          message: `Group Consensus: Sibling sensors also reporting elevated temperatures (average: ${neighborAverage.toFixed(1)}°C).`,
+          action: 'Verified Room Excursion. Action: Inspect main cooling/HVAC systems immediately.'
+        };
+      }
     } else {
       return {
         status: 'healthy',
-        message: `Verified Agreement: Sibling sensors in group "${sensor.group}" are in alignment.`,
-        action: 'Environmental status stable. Confidence rating: High.'
+        message: `Verified Agreement: Sensor is within safety limits and aligned with neighbors (average: ${neighborAverage.toFixed(1)}°C).`,
+        action: 'Environmental status stable. No physical inspection required.'
       };
     }
   };

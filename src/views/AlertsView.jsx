@@ -30,11 +30,16 @@ const AlertsView = () => {
           const neighbors = allSensors.filter(s => s.group === group && s.id !== alert.sensor && s.status !== 'offline');
           
           if (neighbors.length > 0) {
-            const isAlertSensorAbnormal = parseFloat(alert.val) > 28 || alert.param === 'Temperature'; 
-            const areNeighborsNormal = neighbors.every(n => n.temp <= 26 && n.status !== 'warning');
-            
-            if (isAlertSensorAbnormal && areNeighborsNormal) {
-              validationVerdict = 'Sensor Fault (Mismatched)';
+            if (alert.param === 'Temperature') {
+              const neighborAverage = neighbors.reduce((acc, curr) => acc + curr.temp, 0) / neighbors.length;
+              const deviation = Math.abs(parseFloat(alert.val) - neighborAverage);
+              const DEVIATION_THRESHOLD = 3.0; // 3.0°C limit
+              
+              if (deviation > DEVIATION_THRESHOLD) {
+                validationVerdict = 'Sensor Fault (Mismatched)';
+              } else {
+                validationVerdict = 'Excursion (Verified)';
+              }
             } else {
               validationVerdict = 'Excursion (Verified)';
             }
