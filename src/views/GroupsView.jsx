@@ -251,20 +251,39 @@ const GroupsView = () => {
                         </td>
                       </tr>
                     ) : (
-                      groupSensors.map((sensor) => (
-                        <tr key={sensor.id} className="hover:bg-surface-container-lowest transition-colors">
-                          <td className="py-3 px-6 font-semibold text-primary">{sensor.id}</td>
-                          <td className="py-3 px-6 text-center">
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                              sensor.status === 'online' 
-                                ? 'text-status-green bg-status-green/10' 
-                                : sensor.status === 'warning'
-                                ? 'text-error bg-error/10 animate-pulse'
-                                : 'text-outline bg-outline-variant/30'
-                            }`}>
-                              {sensor.status === 'warning' ? 'ALERT' : sensor.status.toUpperCase()}
-                            </span>
-                          </td>
+                      groupSensors.map((sensor) => {
+                        // Calculate Neighbour Mismatch warning for list indicator
+                        const neighbors = groupSensors.filter(s => s.id !== sensor.id && s.status !== 'offline');
+                        let isMismatch = false;
+                        if (neighbors.length > 0 && sensor.temp > 25.0) {
+                          const neighborAverage = neighbors.reduce((acc, curr) => acc + curr.temp, 0) / neighbors.length;
+                          const deviation = Math.abs(sensor.temp - neighborAverage);
+                          if (deviation > 3.0) {
+                            isMismatch = true;
+                          }
+                        }
+
+                        return (
+                          <tr key={sensor.id} className="hover:bg-surface-container-lowest transition-colors">
+                            <td className="py-3 px-6 font-semibold text-primary">{sensor.id}</td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                {isMismatch && (
+                                  <span className="material-symbols-outlined text-[15px] text-yellow-600 font-bold" title="Neighbour Validation Mismatch (Local Hotspot / Sensor Fault)">
+                                    warning
+                                  </span>
+                                )}
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                                  sensor.status === 'online' 
+                                    ? 'text-status-green bg-status-green/10' 
+                                    : sensor.status === 'warning'
+                                    ? 'text-error bg-error/10 animate-pulse'
+                                    : 'text-outline bg-outline-variant/30'
+                                }`}>
+                                  {sensor.status === 'warning' ? 'ALERT' : sensor.status.toUpperCase()}
+                                </span>
+                              </div>
+                            </td>
                           <td className="py-3 px-6 text-center font-mono font-medium">{sensor.temp}°C</td>
                           <td className="py-3 px-6 text-center font-mono font-medium">{sensor.hum}%</td>
                           <td className="py-3 px-6 text-center font-mono font-medium">{sensor.batt}%</td>
@@ -284,8 +303,9 @@ const GroupsView = () => {
                             </button>
                           </td>
                         </tr>
-                      ))
-                    )}
+                      );
+                    })
+                  )}
                   </tbody>
                 </table>
               </div>

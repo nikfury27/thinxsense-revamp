@@ -207,6 +207,18 @@ const SensorsView = () => {
           ) : (
             filteredSensors.map((sensor) => {
               const isSelected = selectedSensor && selectedSensor.id === sensor.id;
+              
+              // Calculate Neighbour Mismatch warning for list indicator
+              const neighbors = sensors.filter(s => s.group === sensor.group && s.id !== sensor.id && s.status !== 'offline');
+              let isMismatch = false;
+              if (neighbors.length > 0 && sensor.temp > 25.0) {
+                const neighborAverage = neighbors.reduce((acc, curr) => acc + curr.temp, 0) / neighbors.length;
+                const deviation = Math.abs(sensor.temp - neighborAverage);
+                if (deviation > 3.0) {
+                  isMismatch = true;
+                }
+              }
+
               return (
                 <div
                   key={sensor.id}
@@ -224,7 +236,12 @@ const SensorsView = () => {
                       {sensor.location?.split(',')[0]}
                     </div>
                   </div>
-                  <div className="text-right flex items-center justify-end">
+                  <div className="text-right flex items-center justify-end gap-1">
+                    {isMismatch && (
+                      <span className="material-symbols-outlined text-[15px] text-yellow-600 font-bold" title="Neighbour Validation Mismatch (Local Hotspot / Sensor Fault)">
+                        warning
+                      </span>
+                    )}
                     <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${
                       sensor.status === 'online' 
                         ? 'text-status-green bg-status-green/10' 
