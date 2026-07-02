@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../api/apiService';
 
-const SensorsView = () => {
+const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
   const [sensors, setSensors] = useState([]);
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,6 +27,17 @@ const SensorsView = () => {
   useEffect(() => {
     fetchSensors();
   }, []);
+
+  // Listen to navigation target selections from the dashboard
+  useEffect(() => {
+    if (navigationTarget && navigationTarget.view === 'sensors' && navigationTarget.id && sensors.length > 0) {
+      const found = sensors.find(s => s.id === navigationTarget.id);
+      if (found) {
+        setSelectedSensor(found);
+      }
+      clearNavigationTarget();
+    }
+  }, [navigationTarget, sensors]);
 
   const handleSensorSelect = (sensor) => {
     setSelectedSensor(sensor);

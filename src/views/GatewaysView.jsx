@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../api/apiService';
 
-const GatewaysView = () => {
+const GatewaysView = ({ navigationTarget, clearNavigationTarget }) => {
   const [gateways, setGateways] = useState([]);
   const [selectedGateway, setSelectedGateway] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +25,17 @@ const GatewaysView = () => {
   useEffect(() => {
     fetchGateways();
   }, []);
+
+  // Listen to navigation target selections from the dashboard
+  useEffect(() => {
+    if (navigationTarget && navigationTarget.view === 'gateways' && navigationTarget.id && gateways.length > 0) {
+      const found = gateways.find(g => g.id === navigationTarget.id);
+      if (found) {
+        setSelectedGateway(found);
+      }
+      clearNavigationTarget();
+    }
+  }, [navigationTarget, gateways]);
 
   const handleGatewaySelect = (gw) => {
     setSelectedGateway(gw);

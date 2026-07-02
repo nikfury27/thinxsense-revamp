@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../api/apiService';
 
-const DashboardView = () => {
+const DashboardView = ({ onNavigate }) => {
   const [sensors, setSensors] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [alerts, setAlerts] = useState([]);
@@ -139,7 +139,17 @@ const DashboardView = () => {
         {/* Sensors Overview (Wide) */}
         <div className="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col shadow-sm">
           <div className="px-6 py-4 border-b border-outline-variant bg-surface flex justify-between items-center">
-            <h2 className="font-headline-md text-headline-md font-bold">Active Sensors</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="font-headline-md text-headline-md font-bold">Active Sensors</h2>
+              <button 
+                onClick={() => onNavigate('sensors')} 
+                className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5 ml-2 focus:outline-none"
+                title="Go to Sensors Page"
+              >
+                <span>View All</span>
+                <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </button>
+            </div>
             <span className="text-status-green font-status-label text-status-label flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-status-green animate-pulse"></span> Live
             </span>
@@ -173,7 +183,13 @@ const DashboardView = () => {
                     
                     <div className="flex justify-between items-start pl-2">
                       <div>
-                        <div className="font-label-sm text-sm text-on-surface font-bold">{sensor.id}</div>
+                        <button 
+                          onClick={() => onNavigate('sensors', sensor.id)}
+                          className="font-label-sm text-sm text-primary hover:underline font-bold text-left block focus:outline-none"
+                          title="Inspect Sensor Validation Details"
+                        >
+                          {sensor.id}
+                        </button>
                         {/* Physical Location Tag (New Feature) */}
                         <div className="text-[10px] text-secondary flex items-center gap-0.5 mt-0.5">
                           <span className="material-symbols-outlined text-[12px]">location_on</span>
@@ -215,8 +231,16 @@ const DashboardView = () => {
 
         {/* Gateways Status (Narrow) */}
         <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col shadow-sm">
-          <div className="px-6 py-4 border-b border-outline-variant bg-surface">
+          <div className="px-6 py-4 border-b border-outline-variant bg-surface flex justify-between items-center">
             <h2 className="font-headline-md text-headline-md font-bold">Gateway Status</h2>
+            <button 
+              onClick={() => onNavigate('gateways')} 
+              className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5 focus:outline-none"
+              title="Go to Gateways Page"
+            >
+              <span>View All</span>
+              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </button>
           </div>
           
           <div className="p-4 flex-1 flex flex-col gap-4 overflow-y-auto max-h-[350px]">
@@ -234,7 +258,13 @@ const DashboardView = () => {
               gateways.map((gw) => (
                 <div key={gw.id} className="bg-surface rounded border border-outline-variant p-3 flex items-center justify-between hover:shadow-sm transition-shadow">
                   <div>
-                    <div className="font-label-sm text-sm font-bold text-on-surface">{gw.id}</div>
+                    <button 
+                      onClick={() => onNavigate('gateways', gw.id)}
+                      className="font-label-sm text-sm font-bold text-primary hover:underline text-left block focus:outline-none"
+                      title="Inspect Gateway Properties"
+                    >
+                      {gw.id}
+                    </button>
                     <div className="text-xs text-on-surface-variant mt-1">Uptime: {gw.uptime}</div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
@@ -257,10 +287,20 @@ const DashboardView = () => {
         {/* Alerts Table (Full Width sorted by ESI) */}
         <div className="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
           <div className="px-6 py-4 border-b border-outline-variant bg-surface flex justify-between items-center">
-            <h2 className="font-headline-md text-headline-md text-error font-bold flex items-center gap-2">
-              <span className="material-symbols-outlined fill text-error animate-pulse">report</span>
-              Active Excursions (Sorted by Severity Index)
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="font-headline-md text-headline-md text-error font-bold flex items-center gap-2">
+                <span className="material-symbols-outlined fill text-error animate-pulse">report</span>
+                Active Excursions (Sorted by Severity Index)
+              </h2>
+              <button 
+                onClick={() => onNavigate('alerts')} 
+                className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5 ml-2 focus:outline-none"
+                title="Go to Alerts Log Page"
+              >
+                <span>View All Logs</span>
+                <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </button>
+            </div>
             <div className="text-xs text-secondary font-semibold font-mono">
               Formula: Severity (ESI) = Duration (mins) × Deviation Magnitude (°C)
             </div>
@@ -300,9 +340,25 @@ const DashboardView = () => {
                 ) : (
                   alerts.map((alert) => (
                     <tr key={alert.id} className="hover:bg-surface-container-low transition-colors">
-                      <td className="py-3 px-6 font-mono text-xs font-bold">{alert.id}</td>
+                      <td className="py-3 px-6 font-mono text-xs font-bold">
+                        <button 
+                          onClick={() => onNavigate('alerts')}
+                          className="text-primary hover:underline font-bold focus:outline-none"
+                          title="Go to Alerts Page"
+                        >
+                          {alert.id}
+                        </button>
+                      </td>
                       <td className="py-3 px-6 font-bold text-on-surface">{alert.room || 'Storage Facility'}</td>
-                      <td className="py-3 px-6 font-semibold text-primary">{alert.sensor}</td>
+                      <td className="py-3 px-6 font-semibold text-primary">
+                        <button 
+                          onClick={() => onNavigate('sensors', alert.sensor)}
+                          className="text-primary hover:underline font-bold focus:outline-none"
+                          title="Inspect Sensor Validation Details"
+                        >
+                          {alert.sensor}
+                        </button>
+                      </td>
                       <td className="py-3 px-6 text-xs text-on-surface-variant flex items-center gap-1 mt-3">
                         <span className="material-symbols-outlined text-[14px]">location_on</span>
                         {alert.location || 'Cold Room'}

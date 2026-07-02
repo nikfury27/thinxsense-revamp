@@ -10,24 +10,44 @@ import GatewaysView from './views/GatewaysView';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
+  const [navigationTarget, setNavigationTarget] = useState(null);
+
+  const handleNavigate = (view, targetId = null) => {
+    if (targetId) {
+      setNavigationTarget({ view, id: targetId });
+    } else {
+      setNavigationTarget(null);
+    }
+    setCurrentView(view);
+  };
 
   // Page Routing resolver
   const renderActiveView = () => {
     switch (currentView) {
       case 'home':
-        return <DashboardView />;
+        return <DashboardView onNavigate={handleNavigate} />;
       case 'groups':
         return <GroupsView />;
       case 'sensors':
-        return <SensorsView />;
+        return (
+          <SensorsView 
+            navigationTarget={navigationTarget} 
+            clearNavigationTarget={() => setNavigationTarget(null)} 
+          />
+        );
       case 'alerts':
         return <AlertsView />;
       case 'users':
         return <UsersView />;
       case 'gateways':
-        return <GatewaysView />;
+        return (
+          <GatewaysView 
+            navigationTarget={navigationTarget} 
+            clearNavigationTarget={() => setNavigationTarget(null)} 
+          />
+        );
       default:
-        return <DashboardView />;
+        return <DashboardView onNavigate={handleNavigate} />;
     }
   };
 
