@@ -129,5 +129,13 @@ export const apiService = {
     };
     sensors.push(newSensor);
     return newSensor;
+  },
+
+  async deleteSensor(sensorId) {
+    await delay(300);
+    sensors = sensors.filter(s => s.id !== sensorId);
+    // Clean up alerts associated with this deleted sensor
+    alerts = alerts.filter(a => a.sensor !== sensorId);
+    return true;
   }
 };

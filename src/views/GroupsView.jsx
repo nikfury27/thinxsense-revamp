@@ -100,6 +100,20 @@ const GroupsView = () => {
     }
   };
 
+  const handleDeleteSensor = async (sensorId) => {
+    if (confirm(`Are you sure you want to permanently delete sensor "${sensorId}"?`)) {
+      setLoadingSensors(true);
+      try {
+        await apiService.deleteSensor(sensorId);
+        await fetchGroupSensors(selectedGroup.name);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingSensors(false);
+      }
+    }
+  };
+
   const handleAddSensorSubmit = async (e) => {
     e.preventDefault();
     if (!sensorId.trim() || !selectedGroup) return;
@@ -216,13 +230,14 @@ const GroupsView = () => {
                       <th className="py-3 px-6 font-headline-md text-xs font-bold text-on-surface uppercase tracking-wider text-center">Current Humidity</th>
                       <th className="py-3 px-6 font-headline-md text-xs font-bold text-on-surface uppercase tracking-wider text-center">Battery</th>
                       <th className="py-3 px-6 font-headline-md text-xs font-bold text-on-surface uppercase tracking-wider">Sensor Location Note</th>
+                      <th className="py-3 px-6 font-headline-md text-xs font-bold text-on-surface uppercase tracking-wider text-center w-24">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="font-body-md text-xs text-on-surface divide-y divide-outline-variant">
                     {loadingSensors ? (
                       [...Array(2)].map((_, i) => (
                         <tr key={i} className="animate-pulse">
-                          {[...Array(6)].map((_, j) => (
+                          {[...Array(7)].map((_, j) => (
                             <td key={j} className="py-3 px-6">
                               <div className="h-4 bg-outline-variant rounded w-3/4"></div>
                             </td>
@@ -231,7 +246,7 @@ const GroupsView = () => {
                       ))
                     ) : groupSensors.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="py-8 text-center text-on-surface-variant italic text-sm">
+                        <td colSpan={7} className="py-8 text-center text-on-surface-variant italic text-sm">
                           No sensors assigned to this group yet. Click "+ Add Sensor to Group" to add one.
                         </td>
                       </tr>
@@ -251,9 +266,18 @@ const GroupsView = () => {
                           <td className="py-3 px-6 text-center font-mono font-medium">{sensor.batt}%</td>
                           
                           {/* Physical Location Note (New Feature requirement) */}
-                          <td className="py-3 px-6 font-medium text-on-surface-variant flex items-center gap-1 mt-1">
+                          <td className="py-3 px-6 font-medium text-on-surface-variant flex items-center gap-1 mt-1 border-r border-outline-variant/30">
                             <span className="material-symbols-outlined text-[14px] text-secondary">location_on</span>
                             {sensor.location || 'Not Specified'}
+                          </td>
+                          <td className="py-3 px-6 text-center">
+                            <button
+                              onClick={() => handleDeleteSensor(sensor.id)}
+                              className="p-1 hover:bg-error-container/20 rounded-full text-secondary hover:text-error transition-all duration-200 active:scale-90"
+                              title={`Delete sensor ${sensor.id}`}
+                            >
+                              <span className="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
                           </td>
                         </tr>
                       ))
