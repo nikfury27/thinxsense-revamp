@@ -13,15 +13,37 @@ const AlertsView = () => {
     setLoading(true);
     try {
       const res = await apiService.getAlerts(searchQuery);
+      const allSensors = await apiService.getSensors();
       
-      // Calculate ESI scores for mock display
+      // Calculate ESI scores for mock display and check Neighbour Validation
       const withEsi = res.map(alert => {
         const esiScore = alert.param === 'Temperature' && alert.deviation 
           ? parseFloat((alert.deviation * alert.duration).toFixed(1)) 
           : alert.param === 'Humidity' && alert.deviation
           ? parseFloat((alert.deviation * (alert.duration / 10)).toFixed(1))
           : 0;
-        return { ...alert, esiScore };
+
+        let validationVerdict = 'Isolated';
+        const alertSensor = allSensors.find(s => s.id === alert.sensor);
+        if (alertSensor) {
+          const group = alertSensor.group;
+          const neighbors = allSensors.filter(s => s.group === group && s.id !== alert.sensor && s.status !== 'offline');
+          
+          if (neighbors.length > 0) {
+            const isAlertSensorAbnormal = parseFloat(alert.val) > 28 || alert.param === 'Temperature'; 
+            const areNeighborsNormal = neighbors.every(n => n.temp <= 26 && n.status !== 'warning');
+            
+            if (isAlertSensorAbnormal && areNeighborsNormal) {
+              validationVerdict = 'Sensor Fault (Mismatched)';
+            } else {
+              validationVerdict = 'Excursion (Verified)';
+            }
+          } else {
+            validationVerdict = 'Isolated Monitoring';
+          }
+        }
+
+        return { ...alert, esiScore, validationVerdict };
       });
       
       setAlerts(withEsi);
@@ -129,6 +151,7 @@ const AlertsView = () => {
                 <th className="py-4 px-6 font-headline-md text-xs font-bold text-on-surface text-center uppercase tracking-wider">Duration</th>
                 <th className="py-4 px-6 font-headline-md text-xs font-bold text-on-surface text-center uppercase tracking-wider">Deviation Magnitude</th>
                 <th className="py-4 px-6 font-headline-md text-xs font-bold text-on-surface text-center uppercase tracking-wider bg-error/5">Severity Index (ESI)</th>
+                <th className="py-4 px-6 font-headline-md text-xs font-bold text-on-surface uppercase tracking-wider text-center">Neighbour Validation</th>
                 <th className="py-4 px-6 font-headline-md text-xs font-bold text-on-surface uppercase tracking-wider text-center">Status</th>
               </tr>
             </thead>
@@ -136,7 +159,7 @@ const AlertsView = () => {
               {loading ? (
                 [...Array(6)].map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    {[...Array(8)].map((_, j) => (
+                    {[...Array(9)].map((_, j) => (
                       <td key={j} className="py-4 px-6">
                         <div className="h-4 bg-outline-variant rounded w-3/4"></div>
                       </td>
@@ -145,7 +168,7 @@ const AlertsView = () => {
                 ))
               ) : currentItems.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-on-surface-variant italic">
+                  <td colSpan={9} className="py-12 text-center text-on-surface-variant italic">
                     No alert logs found matching search criteria.
                   </td>
                 </tr>
@@ -186,6 +209,18 @@ const AlertsView = () => {
                       {/* ESI score display */}
                       <td className="py-3 px-6 text-center font-bold text-error bg-error/5 text-base font-mono">
                         {alert.esiScore}
+                      </td>
+                      {/* Neighbour Validation Column */}
+                      <td className="py-3 px-6 text-center text-xs">
+                        <span className={`px-2.5 py-0.5 rounded font-bold ${
+                          alert.validationVerdict === 'Sensor Fault (Mismatched)'
+                            ? 'bg-yellow-500/20 text-yellow-800 border border-yellow-500/25'
+                            : alert.validationVerdict === 'Excursion (Verified)'
+                            ? 'bg-error-container text-error font-extrabold animate-pulse'
+                            : 'bg-primary/10 text-primary border border-primary/20'
+                        }`}>
+                          {alert.validationVerdict === 'Sensor Fault (Mismatched)' ? '⚠️ Sensor Fault' : alert.validationVerdict === 'Excursion (Verified)' ? '🚨 Verified Excursion' : 'ℹ️ Isolated'}
+                        </span>
                       </td>
 
                       <td className="py-3 px-6 text-center">
