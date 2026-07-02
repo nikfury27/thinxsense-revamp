@@ -13,7 +13,7 @@ const DashboardView = () => {
       const [sensorsRes, gatewaysRes, alertsRes] = await Promise.all([
         apiService.getSensors(),
         apiService.getGateways(),
-        apiService.getAlerts()
+        apiService.getAlerts({ state: 'unacknowledged' })
       ]);
       
       // Displays online H9B series and offline BRR sensors with physical locations
@@ -55,9 +55,7 @@ const DashboardView = () => {
       });
       
       // Sort alerts by ESI severity score descending (ranking severe prolonged deviations to the top)
-      const sortedAlerts = alertsWithEsi
-        .filter(a => a.state === 'unacknowledged')
-        .sort((a, b) => b.esiScore - a.esiScore);
+      const sortedAlerts = alertsWithEsi.sort((a, b) => b.esiScore - a.esiScore);
 
       setAlerts(sortedAlerts);
     } catch (err) {

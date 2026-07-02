@@ -12,7 +12,7 @@ const AlertsView = () => {
   const fetchAlerts = async () => {
     setLoading(true);
     try {
-      const res = await apiService.getAlerts(searchQuery);
+      const res = await apiService.getAlerts({ searchQuery });
       const allSensors = await apiService.getSensors();
       
       // Calculate ESI scores for mock display and check Neighbour Validation

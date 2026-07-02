@@ -47,8 +47,7 @@ const GroupsView = () => {
   const fetchGroupSensors = async (groupName) => {
     setLoadingSensors(true);
     try {
-      const allSensors = await apiService.getSensors();
-      const filtered = allSensors.filter(s => s.group === groupName);
+      const filtered = await apiService.getSensors({ group: groupName });
       setGroupSensors(filtered);
     } catch (err) {
       console.error(err);

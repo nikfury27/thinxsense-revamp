@@ -1,6 +1,6 @@
 // API Service Layer for thinxsense revamped platform
 // Mimics asynchronous backend calls with simulation latency.
-// Swapping this file with actual fetch/axios requests in the future is easy.
+// Optimized for production patterns by utilizing narrow query filters on the server/mock layer.
 
 import {
   initialGroups,
@@ -11,7 +11,7 @@ import {
 } from './mockData';
 
 // Simulated latency helper
-const delay = (ms = 500) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Keep state local to memory during current session
 let groups = [...initialGroups];
@@ -22,31 +22,51 @@ let alerts = [...initialAlerts];
 
 export const apiService = {
   // --- GROUPS API ---
-  async getGroups() {
-    await delay(400);
-    return [...groups];
+  async getGroups(searchQuery = '') {
+    await delay(300);
+    let result = [...groups];
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(g => 
+        g.name.toLowerCase().includes(q) || 
+        g.desc.toLowerCase().includes(q) ||
+        (g.location && g.location.toLowerCase().includes(q))
+      );
+    }
+    return result;
   },
 
   async addGroup(group) {
-    await delay(300);
+    await delay(200);
     const newGroup = {
       sno: groups.length + 1,
       name: group.name,
       desc: group.desc || 'No description provided',
+      location: group.location || 'Not Specified',
       registered: new Date().toLocaleString('en-GB', { hour12: false }).replace(',', '')
     };
     groups.push(newGroup);
     return newGroup;
   },
 
+  async deleteGroup(groupName) {
+    await delay(200);
+    groups = groups.filter(g => g.name !== groupName);
+    // Unassign sensors from this deleted group on the server
+    sensors = sensors.map(s => 
+      s.group === groupName ? { ...s, group: 'unassigned' } : s
+    );
+    return true;
+  },
+
   // --- USERS API ---
   async getUsers() {
-    await delay(500);
+    await delay(300);
     return [...users];
   },
 
   async addUser(user) {
-    await delay(400);
+    await delay(200);
     const newUser = {
       sno: users.length + 1,
       name: user.name,
@@ -60,60 +80,48 @@ export const apiService = {
 
   // --- GATEWAYS API ---
   async getGateways() {
-    await delay(400);
+    await delay(300);
     return [...gateways];
   },
 
   async getGatewayById(id) {
-    await delay(300);
+    await delay(200);
     return gateways.find(gw => gw.id === id) || null;
   },
 
   // --- SENSORS API ---
-  async getSensors() {
-    await delay(600);
-    return [...sensors];
+  // Optimized: filter sensors on the server side instead of fetching the entire array
+  async getSensors(filters = {}) {
+    await delay(400);
+    let result = [...sensors];
+    
+    if (filters.group) {
+      result = result.filter(s => s.group === filters.group);
+    }
+    if (filters.status) {
+      result = result.filter(s => s.status === filters.status);
+    }
+    if (filters.searchQuery) {
+      const q = filters.searchQuery.toLowerCase();
+      result = result.filter(s => s.id.toLowerCase().includes(q));
+    }
+    return result;
   },
 
   async getSensorById(id) {
-    await delay(300);
+    await delay(200);
     return sensors.find(s => s.id === id) || null;
   },
 
-  // --- ALERTS API ---
-  async getAlerts(searchQuery = '') {
-    await delay(500);
-    let filtered = [...alerts];
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(alert => 
-        alert.sensor.toLowerCase().includes(q) || 
-        alert.id.toLowerCase().includes(q)
-      );
-    }
-    return filtered;
-  },
-
-  async acknowledgeAlert(alertId) {
-    await delay(300);
-    alerts = alerts.map(alert => 
-      alert.id === alertId ? { ...alert, state: 'acknowledged' } : alert
-    );
-    return true;
-  },
-
-  async deleteGroup(groupName) {
-    await delay(300);
-    groups = groups.filter(g => g.name !== groupName);
-    // Unassign sensors from this deleted group
-    sensors = sensors.map(s => 
-      s.group === groupName ? { ...s, group: 'unassigned' } : s
-    );
-    return true;
+  // Optimized: dedicated endpoint to fetch only neighboring online sensors in a group
+  async getNeighbours(sensorId, groupName) {
+    await delay(200);
+    if (!groupName || groupName === 'unassigned') return [];
+    return sensors.filter(s => s.group === groupName && s.id !== sensorId && s.status !== 'offline');
   },
 
   async addSensor(sensor) {
-    await delay(300);
+    await delay(200);
     const newSensor = {
       id: sensor.id,
       name: sensor.id,
@@ -132,10 +140,38 @@ export const apiService = {
   },
 
   async deleteSensor(sensorId) {
-    await delay(300);
+    await delay(200);
     sensors = sensors.filter(s => s.id !== sensorId);
-    // Clean up alerts associated with this deleted sensor
     alerts = alerts.filter(a => a.sensor !== sensorId);
+    return true;
+  },
+
+  // --- ALERTS API ---
+  // Optimized: filter alerts on server by state or search query
+  async getAlerts(options = {}) {
+    await delay(300);
+    let filtered = [...alerts];
+    
+    if (options.searchQuery) {
+      const q = options.searchQuery.toLowerCase();
+      filtered = filtered.filter(alert => 
+        alert.sensor.toLowerCase().includes(q) || 
+        alert.id.toLowerCase().includes(q)
+      );
+    }
+    
+    if (options.state) {
+      filtered = filtered.filter(alert => alert.state === options.state);
+    }
+    
+    return filtered;
+  },
+
+  async acknowledgeAlert(alertId) {
+    await delay(200);
+    alerts = alerts.map(alert => 
+      alert.id === alertId ? { ...alert, state: 'acknowledged' } : alert
+    );
     return true;
   }
 };
