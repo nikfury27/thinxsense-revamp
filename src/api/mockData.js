@@ -90,11 +90,12 @@ const generateHistory = (baseTemp, baseHum) => {
 };
 
 export const initialSensors = [
-  // H9B00008 (Room A in our example - Cold Room 1, Rack A)
-  { id: 'H9B00008', name: 'H9B00008', temp: 24.5, hum: 37.0, batt: 94, lastSeen: '2 mins ago', status: 'online', group: 'werrrsdsddf', location: 'Cold Room 1, Rack A', history: generateHistory(24, 37), complianceScore: 99.1 },
+  // H9B00008 (Room A in our example - Cold Room 1, Rack A - Genuine Room Excursion Group Agreement)
+  { id: 'H9B00008', name: 'H9B00008', temp: 29.2, hum: 37.0, batt: 94, lastSeen: '2 mins ago', status: 'warning', group: 'werrrsdsddf', location: 'Cold Room 1, Rack A', history: generateHistory(29, 37), complianceScore: 92.1 },
+  { id: 'H9B00009', name: 'H9B00009', temp: 28.8, hum: 38.2, batt: 90, lastSeen: '3 mins ago', status: 'warning', group: 'werrrsdsddf', location: 'Cold Room 1, Rack B', history: generateHistory(28, 38), complianceScore: 93.0 },
   { id: 'H9B00012', name: 'H9B00012', temp: 24.1, hum: 42.5, batt: 88, lastSeen: '5 mins ago', status: 'online', group: 'co2sdasdf', location: 'Lab Area A, Table 2', history: generateHistory(24, 42), complianceScore: 95.0 },
   
-  // H9B00045 (Room B in our example - Cold Room 2, Rack 3 - Severe Dev)
+  // H9B00045 (Room B in our example - Cold Room 2, Rack 3 - Local Sensor Fault Mismatch)
   { id: 'H9B00045', name: 'H9B00045', temp: 31.2, hum: 88.0, batt: 12, lastSeen: '1 min ago', status: 'warning', group: 'alert1', location: 'Cold Room 2, Rack 3', history: generateHistory(30, 85), complianceScore: 68.4 },
   
   // H9B00046 & H9B00047: Neighboring sensors in the same group (alert1 - Cold Room 2) to validate Neighbour Validation
@@ -105,8 +106,8 @@ export const initialSensors = [
   { id: 'H9B00067', name: 'H9B00067', temp: 26.5, hum: 40.2, batt: 76, lastSeen: 'Just now', status: 'online', group: 'Group', location: 'Loading Dock Door', history: generateHistory(26, 40), complianceScore: 98.7 },
   { id: 'H9B00089', name: 'H9B00089', temp: 27.8, hum: 39.5, batt: 82, lastSeen: '10 mins ago', status: 'online', group: 'Group', location: 'Loading Dock Freezer', history: generateHistory(27, 39), complianceScore: 99.2 },
   
-  // Offline sensors
-  { id: 'BRR00001', name: 'BRR00001', temp: 20.1, hum: 35.0, batt: 92, lastSeen: '12 mins ago', status: 'offline', group: 'werrrsdsddf', location: 'Cold Room 1, Rack B', history: [], complianceScore: 0.0 },
+  // Active warnings in werrrsdsddf for group agreement
+  { id: 'BRR00001', name: 'BRR00001', temp: 28.5, hum: 35.0, batt: 92, lastSeen: '12 mins ago', status: 'warning', group: 'werrrsdsddf', location: 'Cold Room 1, Rack C', history: generateHistory(28, 35), complianceScore: 94.0 },
   { id: 'BRR00002', name: 'BRR00002', temp: 21.3, hum: 36.2, batt: 75, lastSeen: '40 mins ago', status: 'offline', group: 'co2sdasdf', location: 'Lab Area A, Table 3', history: [], complianceScore: 90.0 },
   { id: 'BRR00003', name: 'BRR00003', temp: 29.6, hum: 39.0, batt: 84, lastSeen: 'Just now', status: 'offline', group: 'wewe', location: 'Cold Room 3, Shelf A', history: [], complianceScore: 0.0 },
   { id: 'BRR00004', name: 'BRR00004', temp: 22.5, hum: 41.0, batt: 63, lastSeen: '2 hrs ago', status: 'offline', group: 'alert1', location: 'Cold Room 2, Rack 1', history: [], complianceScore: 94.0 },
