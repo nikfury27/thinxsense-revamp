@@ -100,5 +100,34 @@ export const apiService = {
       alert.id === alertId ? { ...alert, state: 'acknowledged' } : alert
     );
     return true;
+  },
+
+  async deleteGroup(groupName) {
+    await delay(300);
+    groups = groups.filter(g => g.name !== groupName);
+    // Unassign sensors from this deleted group
+    sensors = sensors.map(s => 
+      s.group === groupName ? { ...s, group: 'unassigned' } : s
+    );
+    return true;
+  },
+
+  async addSensor(sensor) {
+    await delay(300);
+    const newSensor = {
+      id: sensor.id,
+      name: sensor.id,
+      temp: parseFloat(sensor.temp) || 24.0,
+      hum: parseFloat(sensor.hum) || 40.0,
+      batt: parseInt(sensor.batt) || 100,
+      status: sensor.status || 'online',
+      group: sensor.group || 'unassigned',
+      location: sensor.location || 'Not Specified',
+      lastSeen: 'Just now',
+      history: [],
+      complianceScore: 100.0
+    };
+    sensors.push(newSensor);
+    return newSensor;
   }
 };
