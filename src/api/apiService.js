@@ -20,6 +20,61 @@ let gateways = [...initialGateways];
 let sensors = [...initialSensors];
 let alerts = [...initialAlerts];
 
+const enrichSensor = (s) => {
+  const group = groups.find(g => g.name === s.group);
+  const facilityLocation = group ? group.location : 'Not Specified';
+  
+  let slope = 0;
+  let projectedHoursToBreach = null;
+  let isTrendBreachRisk = false;
+  
+  if (s.history && s.history.length >= 2) {
+    const latest = s.history[s.history.length - 1];
+    const earlier = s.history[s.history.length - 5] || s.history[0];
+    const tempDiff = latest.temp - earlier.temp;
+    const stepsDiff = s.history.length >= 5 ? 4 : (s.history.length - 1);
+    slope = parseFloat((tempDiff / (stepsDiff || 1)).toFixed(2));
+    
+    if (slope > 0 && s.temp > 22.5 && s.temp < 25.0) {
+      const rawHours = (25.0 - s.temp) / slope;
+      // Round to nearest 0.5 hours for realistic approximation
+      projectedHoursToBreach = parseFloat((Math.round(rawHours * 2) / 2).toFixed(1));
+      if (projectedHoursToBreach <= 4) {
+        isTrendBreachRisk = true;
+      }
+    }
+  }
+  
+  const dailyDrain = s.dailyDrainRate || 1.5;
+  // Round to nearest day for realistic battery swap forecast
+  const batteryDaysRemaining = Math.round(s.batt / dailyDrain);
+  const isBatterySwapRisk = batteryDaysRemaining <= 5;
+  
+  return {
+    ...s,
+    facilityLocation,
+    slope,
+    projectedHoursToBreach,
+    isTrendBreachRisk,
+    batteryDaysRemaining,
+    isBatterySwapRisk
+  };
+};
+
+const enrichGateway = (gw) => {
+  const batt = parseFloat(gw.properties.Battery) || 100;
+  const dailyDrain = parseFloat(gw.properties.dailyDrainRate) || 1.5;
+  // Round to nearest day for realistic battery swap forecast
+  const batteryDaysRemaining = Math.round(batt / dailyDrain);
+  const isBatterySwapRisk = batteryDaysRemaining <= 5;
+  
+  return {
+    ...gw,
+    batteryDaysRemaining,
+    isBatterySwapRisk
+  };
+};
+
 export const apiService = {
   // --- GROUPS API ---
   async getGroups(searchQuery = '') {
@@ -81,12 +136,13 @@ export const apiService = {
   // --- GATEWAYS API ---
   async getGateways() {
     await delay(300);
-    return [...gateways];
+    return gateways.map(enrichGateway);
   },
 
   async getGatewayById(id) {
     await delay(200);
-    return gateways.find(gw => gw.id === id) || null;
+    const gw = gateways.find(gw => gw.id === id);
+    return gw ? enrichGateway(gw) : null;
   },
 
   // --- SENSORS API ---
@@ -105,19 +161,21 @@ export const apiService = {
       const q = filters.searchQuery.toLowerCase();
       result = result.filter(s => s.id.toLowerCase().includes(q));
     }
-    return result;
+
+    return result.map(enrichSensor);
   },
 
   async getSensorById(id) {
     await delay(200);
-    return sensors.find(s => s.id === id) || null;
+    const s = sensors.find(s => s.id === id);
+    return s ? enrichSensor(s) : null;
   },
 
   // Optimized: dedicated endpoint to fetch only neighboring online sensors in a group
   async getNeighbours(sensorId, groupName) {
     await delay(200);
     if (!groupName || groupName === 'unassigned') return [];
-    return sensors.filter(s => s.group === groupName && s.id !== sensorId && s.status !== 'offline');
+    return sensors.filter(s => s.group === groupName && s.id !== sensorId && s.status !== 'offline').map(enrichSensor);
   },
 
   async addSensor(sensor) {

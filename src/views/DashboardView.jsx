@@ -5,6 +5,8 @@ const DashboardView = ({ onNavigate }) => {
   const [sensors, setSensors] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [alerts, setAlerts] = useState([]);
+  const [trendWarnings, setTrendWarnings] = useState([]);
+  const [batteryProjections, setBatteryProjections] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchDashboardData = async () => {
@@ -20,6 +22,28 @@ const DashboardView = ({ onNavigate }) => {
       setSensors(sensorsRes.slice(0, 6)); 
       setGateways(gatewaysRes);
       
+      // Filter predictions
+      const trends = sensorsRes.filter(s => s.isTrendBreachRisk);
+      const battProjs = [
+        ...sensorsRes.filter(s => s.isBatterySwapRisk).map(s => ({
+          id: s.id,
+          type: 'sensor',
+          days: s.batteryDaysRemaining,
+          location: s.facilityLocation && s.facilityLocation !== 'Not Specified' ? `${s.facilityLocation}, ${s.location}` : s.location,
+          level: s.batt
+        })),
+        ...gatewaysRes.filter(g => g.isBatterySwapRisk).map(g => ({
+          id: g.id,
+          type: 'gateway',
+          days: g.batteryDaysRemaining,
+          location: 'Gateway Node',
+          level: parseInt(g.properties.Battery) || 16
+        }))
+      ].sort((a, b) => a.days - b.days);
+
+      setTrendWarnings(trends);
+      setBatteryProjections(battProjs);
+
       // Calculate ESI score and Neighbour Validation verdict for alerts
       const alertsWithEsi = alertsRes.map(alert => {
         const esiScore = alert.param === 'Temperature' && alert.deviation 
@@ -87,8 +111,85 @@ const DashboardView = ({ onNavigate }) => {
         </button>
       </div>
 
+      {/* Proactive Diagnostics & Predictive swaps (New Feature) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Trend Warning Card */}
+        <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col">
+          <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
+            <span className="material-symbols-outlined text-orange-500 font-bold">trending_up</span>
+            Early Warning: Temperature Trend Risks
+          </h3>
+          <div className="flex-1 space-y-3">
+            {loading ? (
+              <div className="animate-pulse space-y-2 py-1">
+                <div className="h-10 bg-outline-variant rounded w-full"></div>
+              </div>
+            ) : trendWarnings.length === 0 ? (
+              <p className="text-xs text-on-surface-variant italic py-2">No sensors showing climbing temperature breach risks.</p>
+            ) : (
+              trendWarnings.map(sensor => (
+                <div key={sensor.id} className="p-3 bg-orange-50/50 border border-orange-200/50 rounded-lg flex items-center justify-between hover:bg-orange-50 transition-colors">
+                  <div className="text-xs">
+                    <button 
+                      onClick={() => onNavigate('sensors', sensor.id)}
+                      className="font-bold text-primary hover:underline block text-left focus:outline-none"
+                    >
+                      {sensor.id} (Group: {sensor.group})
+                    </button>
+                    <span className="text-on-surface-variant block mt-0.5">
+                      📍 {sensor.facilityLocation && sensor.facilityLocation !== 'Not Specified' ? `${sensor.facilityLocation}, ${sensor.location}` : sensor.location}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-orange-600 block text-xs">+{sensor.slope}°C/hr</span>
+                    <span className="text-[10px] text-orange-500 font-semibold block mt-0.5">Breaches in ~{sensor.projectedHoursToBreach} hrs ({sensor.temp}°C)</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Battery Swap Projections Card */}
+        <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col">
+          <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
+            <span className="material-symbols-outlined text-red-500 font-bold">battery_alert</span>
+            Predictive swaps: Approaching Depletion
+          </h3>
+          <div className="flex-1 space-y-3">
+            {loading ? (
+              <div className="animate-pulse space-y-2 py-1">
+                <div className="h-10 bg-outline-variant rounded w-full"></div>
+              </div>
+            ) : batteryProjections.length === 0 ? (
+              <p className="text-xs text-on-surface-variant italic py-2">No units forecasting battery depletion within 5 days.</p>
+            ) : (
+              batteryProjections.map(proj => (
+                <div key={proj.id} className="p-3 bg-red-50/50 border border-red-200/50 rounded-lg flex items-center justify-between hover:bg-red-50 transition-colors">
+                  <div className="text-xs">
+                    <button 
+                      onClick={() => onNavigate(proj.type === 'sensor' ? 'sensors' : 'gateways', proj.id)}
+                      className="font-bold text-primary hover:underline block text-left focus:outline-none"
+                    >
+                      {proj.id} ({proj.type === 'sensor' ? 'Sensor' : 'Gateway'})
+                    </button>
+                    <span className="text-on-surface-variant block mt-0.5">
+                      📍 {proj.location}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-red-600 block text-xs">🔋 {proj.level}% Remaining</span>
+                    <span className="text-[10px] text-red-500 font-semibold block mt-0.5">Depleted in ~{proj.days} days</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* ESI Evaluation Explanation Panel (New Feature Showcase) */}
-      <div className="bg-white border-2 border-primary/20 rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
         <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
           <span className="material-symbols-outlined">analytics</span>
           Excursion Severity Index (ESI) Evaluation
@@ -191,9 +292,9 @@ const DashboardView = ({ onNavigate }) => {
                           {sensor.id}
                         </button>
                         {/* Physical Location Tag (New Feature) */}
-                        <div className="text-[10px] text-secondary flex items-center gap-0.5 mt-0.5">
+                        <div className="text-[10px] text-secondary flex items-center gap-0.5 mt-0.5" title={(sensor.facilityLocation && sensor.facilityLocation !== 'Not Specified') ? `${sensor.facilityLocation}, ${sensor.location || ''}` : (sensor.location || 'Storage Facility')}>
                           <span className="material-symbols-outlined text-[12px]">location_on</span>
-                          {sensor.location || 'Storage Facility'}
+                          {(sensor.facilityLocation && sensor.facilityLocation !== 'Not Specified') ? `${sensor.facilityLocation}, ${sensor.location || ''}` : (sensor.location || 'Storage Facility')}
                         </div>
                       </div>
                       <div className="flex items-center gap-1 text-xs text-on-surface-variant">

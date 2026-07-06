@@ -51,7 +51,54 @@ const AlertsView = () => {
         return { ...alert, esiScore, validationVerdict };
       });
       
-      setAlerts(withEsi);
+      // Generate early trend warnings and battery decay alarms dynamically
+      const trendAlerts = allSensors
+        .filter(s => s.isTrendBreachRisk)
+        .map(s => ({
+          id: `WRN-TRND-${s.id}`,
+          sensor: s.id,
+          location: s.facilityLocation && s.facilityLocation !== 'Not Specified' ? `${s.facilityLocation}, ${s.location}` : s.location,
+          time: 'Just now',
+          duration: 0,
+          param: 'Temperature Trend',
+          val: `${s.temp}°C`,
+          deviation: parseFloat(s.slope.toFixed(2)),
+          arrow: 'upward',
+          esiScore: parseFloat((s.slope * 10).toFixed(1)),
+          validationVerdict: 'Early Warning',
+          state: 'unacknowledged',
+          isEarlyWarning: true
+        }));
+
+      const batteryAlerts = allSensors
+        .filter(s => s.isBatterySwapRisk)
+        .map(s => ({
+          id: `WRN-BATT-${s.id}`,
+          sensor: s.id,
+          location: s.facilityLocation && s.facilityLocation !== 'Not Specified' ? `${s.facilityLocation}, ${s.location}` : s.location,
+          time: 'Just now',
+          duration: 0,
+          param: 'Battery Decay',
+          val: `${s.batt}%`,
+          deviation: s.batteryDaysRemaining,
+          arrow: 'none',
+          esiScore: 0,
+          validationVerdict: 'Proactive Swaps',
+          state: 'unacknowledged',
+          isEarlyWarning: true
+        }));
+
+      // Filter by searchQuery if present
+      let proactiveAlerts = [...trendAlerts, ...batteryAlerts];
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        proactiveAlerts = proactiveAlerts.filter(a => 
+          a.sensor.toLowerCase().includes(q) || 
+          a.id.toLowerCase().includes(q)
+        );
+      }
+
+      setAlerts([...proactiveAlerts, ...withEsi]);
       setCurrentPage(1); // Reset page on search
     } catch (err) {
       console.error(err);
@@ -181,6 +228,8 @@ const AlertsView = () => {
                 currentItems.map((alert) => {
                   const isTempParam = alert.param === 'Temperature';
                   const isHumParam = alert.param === 'Humidity';
+                  const isTempTrend = alert.param === 'Temperature Trend';
+                  const isBatteryDecay = alert.param === 'Battery Decay';
                   
                   return (
                     <tr key={alert.id} className="hover:bg-surface-variant/20 transition-colors">
@@ -194,23 +243,37 @@ const AlertsView = () => {
                       </td>
                       
                       <td className="py-3 px-6 text-xs">{alert.time}</td>
-                      <td className="py-3 px-6 text-center font-mono font-medium">{alert.duration || 0} mins</td>
+                      <td className="py-3 px-6 text-center font-mono font-medium">
+                        {isTempTrend || isBatteryDecay ? '--' : `${alert.duration || 0} mins`}
+                      </td>
                       
                       {/* Deviation column */}
                       <td className="py-3 px-6 text-center">
-                        <div className={`flex items-center justify-center gap-0.5 font-bold ${
-                          isTempParam ? 'text-status-error' : 'text-status-success'
-                        }`}>
-                          +{alert.deviation || 0}{isTempParam ? '°C' : '%'}
-                          {alert.arrow === 'upward' && (
-                            <span className="material-symbols-outlined text-[16px] text-status-error font-black">arrow_upward</span>
-                          )}
-                          {alert.arrow === 'downward' && (
-                            <span className="material-symbols-outlined text-[16px] text-status-error font-black">arrow_downward</span>
-                          )}
-                        </div>
+                        {isBatteryDecay ? (
+                          <div className="text-red-500 font-bold flex items-center justify-center gap-1">
+                            <span className="material-symbols-outlined text-[16px] text-red-500">battery_alert</span>
+                            Swap in {alert.deviation}d
+                          </div>
+                        ) : isTempTrend ? (
+                          <div className="text-orange-500 font-bold flex items-center justify-center gap-0.5">
+                            +{alert.deviation}°C/hr
+                            <span className="material-symbols-outlined text-[16px] text-orange-500 font-black">arrow_upward</span>
+                          </div>
+                        ) : (
+                          <div className={`flex items-center justify-center gap-0.5 font-bold ${
+                            isTempParam ? 'text-status-error' : 'text-status-success'
+                          }`}>
+                            +{alert.deviation || 0}{isTempParam ? '°C' : '%'}
+                            {alert.arrow === 'upward' && (
+                              <span className="material-symbols-outlined text-[16px] text-status-error font-black">arrow_upward</span>
+                            )}
+                            {alert.arrow === 'downward' && (
+                              <span className="material-symbols-outlined text-[16px] text-status-error font-black">arrow_downward</span>
+                            )}
+                          </div>
+                        )}
                       </td>
-
+ 
                       {/* ESI score display */}
                       <td className="py-3 px-6 text-center font-bold text-error bg-error/5 text-base font-mono">
                         {alert.esiScore}
@@ -222,12 +285,20 @@ const AlertsView = () => {
                             ? 'bg-yellow-500/20 text-yellow-800 border border-yellow-500/25'
                             : alert.validationVerdict === 'Excursion (Verified)'
                             ? 'bg-error-container text-error font-extrabold animate-pulse'
+                            : alert.validationVerdict === 'Early Warning'
+                            ? 'bg-orange-500/10 text-orange-700 border border-orange-500/25 font-extrabold animate-pulse'
+                            : alert.validationVerdict === 'Proactive Swaps'
+                            ? 'bg-red-500/15 text-red-700 border border-red-500/25 font-extrabold animate-pulse'
                             : 'bg-primary/10 text-primary border border-primary/20'
                         }`}>
-                          {alert.validationVerdict === 'Sensor Fault (Mismatched)' ? '⚠️ Sensor Fault' : alert.validationVerdict === 'Excursion (Verified)' ? '🚨 Verified Excursion' : 'ℹ️ Isolated'}
+                          {alert.validationVerdict === 'Sensor Fault (Mismatched)' ? '⚠️ Sensor Fault' : 
+                           alert.validationVerdict === 'Excursion (Verified)' ? '🚨 Verified Excursion' : 
+                           alert.validationVerdict === 'Early Warning' ? '⚠️ Early Warning' : 
+                           alert.validationVerdict === 'Proactive Swaps' ? '🔧 Swap Required' : 
+                           'ℹ️ Isolated'}
                         </span>
                       </td>
-
+ 
                       <td className="py-3 px-6 text-center">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                           alert.state === 'unacknowledged' ? 'bg-error-container text-on-error-container animate-pulse' : 'bg-surface-variant text-on-surface-variant'

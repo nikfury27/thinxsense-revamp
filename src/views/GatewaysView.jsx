@@ -101,10 +101,15 @@ const GatewaysView = ({ navigationTarget, clearNavigationTarget }) => {
                   <div className={`text-sm ${isSelected ? 'text-primary font-bold' : 'text-on-surface'}`}>
                     {gw.id}
                   </div>
-                  <div className={`text-right text-[10px] font-bold ${
-                    gw.status === 'online' ? 'text-primary' : 'text-error'
-                  }`}>
-                    {gw.status.toUpperCase()}
+                  <div className="text-right flex items-center justify-end gap-1.5 text-[10px] font-bold">
+                    {gw.isBatterySwapRisk && (
+                      <span className="material-symbols-outlined text-[15px] text-red-500 font-bold" title={`Predictive Swap: low battery, dead in ~${gw.batteryDaysRemaining} days`}>
+                        battery_alert
+                      </span>
+                    )}
+                    <span className={gw.status === 'online' ? 'text-primary' : 'text-error'}>
+                      {gw.status.toUpperCase()}
+                    </span>
                   </div>
                 </div>
               );
@@ -159,6 +164,19 @@ const GatewaysView = ({ navigationTarget, clearNavigationTarget }) => {
                 </div>
               </div>
             </div>
+            
+            {/* Predictive Swaps Banner */}
+            {selectedGateway.isBatterySwapRisk && (
+              <div className="mx-6 mt-4 p-3.5 bg-red-500/10 border border-red-500/20 text-red-700 rounded-lg text-xs flex items-center gap-2 animate-fadeIn shrink-0">
+                <span className="material-symbols-outlined text-red-500 font-bold">battery_alert</span>
+                <div>
+                  <strong className="font-bold block">Predictive swaps: Proactive swap recommended!</strong>
+                  <span className="text-[10px] text-red-600 block mt-0.5">
+                    Battery depletion forecast in ~<strong>{selectedGateway.batteryDaysRemaining} days</strong> (Daily usage rate: -{selectedGateway.properties.dailyDrainRate || '1.5'}%/day).
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Properties Grid */}
             <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">

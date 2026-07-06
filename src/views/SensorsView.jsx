@@ -243,11 +243,40 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
                       {sensor.id}
                     </div>
                     {/* Location Badge on items */}
-                    <div className="text-[9px] text-secondary truncate w-28">
-                      {sensor.location?.split(',')[0]}
+                    <div className="text-[9px] text-secondary truncate w-28" title={`${sensor.facilityLocation || 'Not Specified'}, ${sensor.location || 'Not Specified'}`}>
+                      {sensor.facilityLocation || 'Not Specified'}, {sensor.location || 'Not Specified'}
                     </div>
                   </div>
                   <div className="text-right flex items-center justify-end gap-1">
+                    {selectedSensor && selectedSensor.id === sensor.id && (
+                      <>
+                        {sensor.isTrendBreachRisk && (
+                          <span className="material-symbols-outlined text-[15px] text-orange-500 font-bold" title={`Early Warning: climbing temp (+${sensor.slope}°C/hr), breaches in ~${sensor.projectedHoursToBreach}h`}>
+                            trending_up
+                          </span>
+                        )}
+                        {sensor.isBatterySwapRisk && (
+                          <span className="material-symbols-outlined text-[15px] text-red-500 font-bold" title={`Predictive Swap: battery low (${sensor.batt}%), dead in ~${sensor.batteryDaysRemaining} days`}>
+                            battery_alert
+                          </span>
+                        )}
+                      </>
+                    )}
+                    {/* Make sure predictions can display even when not selected if they are risks */}
+                    {!(selectedSensor && selectedSensor.id === sensor.id) && (
+                      <>
+                        {sensor.isTrendBreachRisk && (
+                          <span className="material-symbols-outlined text-[15px] text-orange-500 font-bold" title={`Early Warning: climbing temp (+${sensor.slope}°C/hr)`}>
+                            trending_up
+                          </span>
+                        )}
+                        {sensor.isBatterySwapRisk && (
+                          <span className="material-symbols-outlined text-[15px] text-red-500 font-bold" title={`Predictive Swap: dead in ~${sensor.batteryDaysRemaining} days`}>
+                            battery_alert
+                          </span>
+                        )}
+                      </>
+                    )}
                     {isMismatch && (
                       <span className="material-symbols-outlined text-[15px] text-yellow-600 font-bold" title="Neighbour Validation Mismatch (Local Hotspot / Sensor Fault)">
                         warning
@@ -325,7 +354,7 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
                 {/* Physical Location Badge */}
                 <div className="text-xs text-on-surface-variant flex items-center gap-1 mt-2">
                   <span className="material-symbols-outlined text-[16px] text-secondary">location_on</span>
-                  <span>Physical Location: <strong className="text-on-surface font-semibold">{selectedSensor.location || 'Not Specified'}</strong></span>
+                  <span>Physical Location: <strong className="text-on-surface font-semibold">{(selectedSensor.facilityLocation && selectedSensor.facilityLocation !== 'Not Specified') ? `${selectedSensor.facilityLocation}, ${selectedSensor.location || ''}` : (selectedSensor.location || 'Not Specified')}</strong></span>
                 </div>
               </div>
 
@@ -416,6 +445,88 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
                   </div>
                 );
               })()}
+            </div>
+
+            {/* Proactive Diagnostics Panel (New Feature) */}
+            <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm shrink-0">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-secondary mb-3 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-primary text-[16px]">online_prediction</span>
+                Proactive Diagnostics & Predictive Swaps
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Slope Trend warning details */}
+                <div className={`p-3 rounded-lg border text-xs flex flex-col justify-between ${
+                  selectedSensor.isTrendBreachRisk
+                    ? 'bg-orange-500/10 border-orange-500/20'
+                    : 'bg-surface border-outline-variant/60'
+                }`}>
+                  <div>
+                    <strong className={`font-bold flex items-center gap-1 ${
+                      selectedSensor.isTrendBreachRisk ? 'text-orange-700 font-extrabold' : 'text-secondary'
+                    }`}>
+                      <span className="material-symbols-outlined text-[14px]">
+                        {selectedSensor.slope > 0 ? 'trending_up' : selectedSensor.slope < 0 ? 'trending_down' : 'trending_flat'}
+                      </span>
+                      Temperature Trend Analysis
+                    </strong>
+                    <div className="mt-2 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Current Slope:</span>
+                        <strong className="font-mono">{selectedSensor.slope > 0 ? `+${selectedSensor.slope}` : selectedSensor.slope}°C/hr</strong>
+                      </div>
+                      {selectedSensor.projectedHoursToBreach !== null && (
+                        <div className="flex justify-between mt-1">
+                          <span>Hours to Breach (25°C):</span>
+                          <strong className="font-mono text-orange-600 animate-pulse">~{selectedSensor.projectedHoursToBreach} hours</strong>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-on-surface-variant mt-2 border-t border-black/5 pt-1.5 font-semibold">
+                    {selectedSensor.isTrendBreachRisk 
+                      ? '⚠️ Warning: Temperature climbing rapidly toward threshold limits. Inspect refrigeration unit immediately.'
+                      : selectedSensor.slope > 0 
+                      ? 'Refrigerated environment is warming up; slope rate is currently safe.' 
+                      : 'Refrigerated environment is stable; trend slope is flat or cooling.'}
+                  </div>
+                </div>
+
+                {/* Battery Swap Projections */}
+                <div className={`p-3 rounded-lg border text-xs flex flex-col justify-between ${
+                  selectedSensor.isBatterySwapRisk
+                    ? 'bg-red-500/10 border-red-500/20'
+                    : 'bg-surface border-outline-variant/60'
+                }`}>
+                  <div>
+                    <strong className={`font-bold flex items-center gap-1 ${
+                      selectedSensor.isBatterySwapRisk ? 'text-red-700 font-extrabold' : 'text-secondary'
+                    }`}>
+                      <span className="material-symbols-outlined text-[14px]">
+                        {selectedSensor.isBatterySwapRisk ? 'battery_alert' : 'battery_full'}
+                      </span>
+                      Battery Swap Forecasting
+                    </strong>
+                    <div className="mt-2 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Daily Usage Rate:</span>
+                        <strong className="font-mono">-{selectedSensor.dailyDrainRate || 1.5}%/day</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Predicted Remaining Life:</span>
+                        <strong className={`font-mono ${selectedSensor.isBatterySwapRisk ? 'text-red-600 font-extrabold animate-pulse' : ''}`}>
+                          {selectedSensor.batteryDaysRemaining} days
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-on-surface-variant mt-2 border-t border-black/5 pt-1.5 font-semibold">
+                    {selectedSensor.isBatterySwapRisk
+                      ? '🚨 Swapping Required: Battery depletion forecast in less than 5 days. Schedule a technician swap.'
+                      : `Battery health optimal. Swapping estimated in ~${selectedSensor.batteryDaysRemaining} days.`}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Chart Area Panel */}
