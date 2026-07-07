@@ -1,6 +1,12 @@
 import React from 'react';
+import { useCurrentUser } from '../hooks/useCurrentUser';
+import LensSwitcher from './LensSwitcher';
 
 const Sidebar = ({ currentView, onViewChange }) => {
+  const { currentUser } = useCurrentUser();
+  const displayName = currentUser?.name || 'shwetha';
+  const displayRole = currentUser?.role || 'ADMIN';
+
   const menuItems = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'groups', label: 'Groups', icon: 'group_work' },
@@ -67,15 +73,18 @@ const Sidebar = ({ currentView, onViewChange }) => {
       </nav>
 
       {/* Footer Profile & Logout */}
-      <div className="flex flex-col mt-auto pt-4 border-t border-white/10 w-full px-2 lg:px-4">
-        <div className="flex items-center gap-3 px-2 py-2 mb-2 justify-center lg:justify-start">
-          <div className="w-8 h-8 rounded-full bg-white text-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
-            S
+      <div className="flex flex-col mt-auto pt-4 border-t border-white/10 w-full px-2 lg:px-4 gap-2">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-3 px-2 py-2 justify-center lg:justify-start">
+            <div className="w-8 h-8 rounded-full bg-white text-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm uppercase">
+              {displayName[0] || 'S'}
+            </div>
+            <div className="hidden lg:block">
+              <p className="font-bold text-sm text-white truncate max-w-[120px]">{displayName}</p>
+              <p className="text-xs text-white/70">{displayRole}</p>
+            </div>
           </div>
-          <div className="hidden lg:block">
-            <p className="font-bold text-sm text-white">shwetha</p>
-            <p className="text-xs text-white/70">ADMIN</p>
-          </div>
+          <LensSwitcher />
         </div>
         
         <button
@@ -84,13 +93,13 @@ const Sidebar = ({ currentView, onViewChange }) => {
               alert('Logged out. (Mock action)');
             }
           }}
-          className="w-full flex items-center justify-center lg:justify-start gap-4 px-2 lg:px-4 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all active:scale-95 text-left"
+          className="w-full flex items-center justify-center lg:justify-start gap-4 px-2 lg:px-4 py-2.5 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all active:scale-95 text-left mt-1"
           title="Logout"
         >
           <span className="material-symbols-outlined text-[20px]">logout</span>
           <span className="hidden lg:inline font-body-md text-sm">Logout</span>
         </button>
-        <p className="hidden lg:block text-[10px] text-white/40 text-center mt-4">Version 2.0</p>
+        <p className="hidden lg:block text-[10px] text-white/40 text-center mt-2">Version 2.0</p>
       </div>
     </aside>
   );

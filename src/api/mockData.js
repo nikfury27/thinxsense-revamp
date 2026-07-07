@@ -9,7 +9,7 @@ export const initialGroups = [
 ];
 
 export const initialUsers = [
-  { sno: 1, name: 'shwetha', role: 'ADMIN', email: 'shwetha@thinxsense.com', registered: '12-01-2026' }
+  { sno: 1, name: 'shwetha', role: 'ADMIN', email: 'shwetha@thinxsense.com', registered: '12-01-2026', lens: 'ops' }
 ];
 
 export const initialGateways = [

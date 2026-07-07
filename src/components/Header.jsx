@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
+import { useCurrentUser } from '../hooks/useCurrentUser';
 
 const Header = () => {
+  const { currentUser } = useCurrentUser();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [handoverNotes, setHandoverNotes] = useState('');
   const [signedBy, setSignedBy] = useState('shwetha');
   const [isHandedOver, setIsHandedOver] = useState(false);
+
+  const displayName = currentUser?.name || 'shwetha';
+  const initials = displayName.slice(0, 2).toUpperCase();
 
   const handleHandoverSubmit = (e) => {
     e.preventDefault();
@@ -71,8 +76,8 @@ const Header = () => {
           </button>
 
           {/* User avatar indicator */}
-          <div className="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-sm ml-2 cursor-pointer shadow-sm select-none hover:opacity-90 active:scale-95 transition-all">
-            JS
+          <div className="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-sm ml-2 cursor-pointer shadow-sm select-none hover:opacity-90 active:scale-95 transition-all uppercase">
+            {initials}
           </div>
         </div>
       </header>
