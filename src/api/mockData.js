@@ -106,7 +106,7 @@ export const initialGateways = [
 ];
 
 // Generate mock temperature/humidity history for time-series charts
-const generateHistory = (baseTemp, baseHum) => {
+export const generateHistory = (baseTemp, baseHum) => {
   const history = [];
   const now = new Date();
   for (let i = 24; i >= 0; i--) {

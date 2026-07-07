@@ -7,7 +7,8 @@ import {
   initialUsers,
   initialGateways,
   initialSensors,
-  initialAlerts
+  initialAlerts,
+  generateHistory
 } from './mockData';
 
 // Simulated latency helper
@@ -98,6 +99,12 @@ export const apiService = {
       name: group.name,
       desc: group.desc || 'No description provided',
       location: group.location || 'Not Specified',
+      minTemp: parseFloat(group.minTemp) || 2.0,
+      maxTemp: parseFloat(group.maxTemp) || 8.0,
+      minHum: parseFloat(group.minHum) || 35.0,
+      maxHum: parseFloat(group.maxHum) || 75.0,
+      email: group.email || 'Not Specified',
+      mobile: group.mobile || 'Not Specified',
       registered: new Date().toLocaleString('en-GB', { hour12: false }).replace(',', '')
     };
     groups.push(newGroup);
@@ -180,21 +187,35 @@ export const apiService = {
 
   async addSensor(sensor) {
     await delay(200);
-    const newSensor = {
-      id: sensor.id,
-      name: sensor.id,
-      temp: parseFloat(sensor.temp) || 24.0,
-      hum: parseFloat(sensor.hum) || 40.0,
-      batt: parseInt(sensor.batt) || 100,
-      status: sensor.status || 'online',
-      group: sensor.group || 'unassigned',
-      location: sensor.location || 'Not Specified',
-      lastSeen: 'Just now',
-      history: [],
-      complianceScore: 100.0
-    };
-    sensors.push(newSensor);
-    return newSensor;
+    const existingIndex = sensors.findIndex(s => s.id === sensor.id);
+    if (existingIndex > -1) {
+      sensors[existingIndex] = {
+        ...sensors[existingIndex],
+        group: sensor.group || 'unassigned',
+        location: sensor.location || 'Not Specified',
+        lastSeen: 'Just now'
+      };
+      return sensors[existingIndex];
+    } else {
+      const randomTemp = parseFloat((Math.random() * (26 - 18) + 18).toFixed(1));
+      const randomHum = parseFloat((Math.random() * (60 - 30) + 30).toFixed(1));
+      const newSensor = {
+        id: sensor.id,
+        name: sensor.id,
+        temp: randomTemp,
+        hum: randomHum,
+        batt: Math.floor(Math.random() * (100 - 45 + 1)) + 45, // random battery between 45% and 100%
+        status: sensor.status || 'online',
+        group: sensor.group || 'unassigned',
+        location: sensor.location || 'Not Specified',
+        dailyDrainRate: parseFloat((Math.random() * (3.0 - 0.8) + 0.8).toFixed(1)), // random drain rate between 0.8% and 3.0%
+        lastSeen: 'Just now',
+        history: generateHistory(randomTemp, randomHum),
+        complianceScore: 100.0
+      };
+      sensors.push(newSensor);
+      return newSensor;
+    }
   },
 
   async deleteSensor(sensorId) {

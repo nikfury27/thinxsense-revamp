@@ -6,7 +6,7 @@ const GroupsView = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
-  
+
   // Group details view state
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [groupSensors, setGroupSensors] = useState([]);
@@ -17,15 +17,39 @@ const GroupsView = () => {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [location, setLocation] = useState('');
+  const [minTemp, setMinTemp] = useState('2.0');
+  const [maxTemp, setMaxTemp] = useState('8.0');
+  const [minHum, setMinHum] = useState('35.0');
+  const [maxHum, setMaxHum] = useState('75.0');
+  const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Sensor Form states (for adding to a group)
   const [sensorId, setSensorId] = useState('');
-  const [sensorTemp, setSensorTemp] = useState('24.0');
-  const [sensorHum, setSensorHum] = useState('40.0');
-  const [sensorBatt, setSensorBatt] = useState('98');
   const [sensorLoc, setSensorLoc] = useState('');
   const [isSubmittingSensor, setIsSubmittingSensor] = useState(false);
+  const [allSensorsList, setAllSensorsList] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    if (showSensorModal) {
+      const loadSensorsForDropdown = async () => {
+        try {
+          const res = await apiService.getSensors();
+          setAllSensorsList(res);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      loadSensorsForDropdown();
+    }
+  }, [showSensorModal]);
+
+  const filteredAvailable = allSensorsList.filter(s => 
+    s.group !== selectedGroup?.name && 
+    s.id.toLowerCase().includes(sensorId.toLowerCase())
+  );
 
   const fetchGroups = async () => {
     setLoading(true);
@@ -68,10 +92,26 @@ const GroupsView = () => {
 
     setIsSubmitting(true);
     try {
-      await apiService.addGroup({ name, desc, location: location || 'Not Specified' });
+      await apiService.addGroup({ 
+        name, 
+        desc, 
+        location: location || 'Not Specified',
+        minTemp,
+        maxTemp,
+        minHum,
+        maxHum,
+        email,
+        mobile
+      });
       setName('');
       setDesc('');
       setLocation('');
+      setMinTemp('2.0');
+      setMaxTemp('8.0');
+      setMinHum('35.0');
+      setMaxHum('75.0');
+      setEmail('');
+      setMobile('');
       setShowModal(false);
       await fetchGroups(); // Refresh data
     } catch (err) {
@@ -121,17 +161,11 @@ const GroupsView = () => {
     try {
       await apiService.addSensor({
         id: sensorId,
-        temp: sensorTemp,
-        hum: sensorHum,
-        batt: sensorBatt,
         location: sensorLoc || 'Not Specified',
         group: selectedGroup.name,
         status: 'online'
       });
       setSensorId('');
-      setSensorTemp('24.0');
-      setSensorHum('40.0');
-      setSensorBatt('98');
       setSensorLoc('');
       setShowSensorModal(false);
       await fetchGroupSensors(selectedGroup.name); // Refresh list
@@ -143,7 +177,7 @@ const GroupsView = () => {
   };
 
   // Filter groups locally based on search query
-  const filteredGroups = groups.filter(g => 
+  const filteredGroups = groups.filter(g =>
     g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     g.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (g.location && g.location.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -192,22 +226,61 @@ const GroupsView = () => {
 
           {/* Group Info Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm space-y-2.5">
-              <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Group Name</span>
-              <strong className="text-primary text-base font-semibold block">{selectedGroup.name}</strong>
+            {/* Primary Details */}
+            <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm space-y-3">
+              <div>
+                <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Group Name</span>
+                <strong className="text-primary text-base font-semibold block">{selectedGroup.name}</strong>
+              </div>
+              <div className="border-t border-outline-variant/30 pt-2.5">
+                <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Physical Location</span>
+                <strong className="text-on-surface text-sm font-semibold block flex items-center gap-1 mt-0.5">
+                  <span className="material-symbols-outlined text-primary text-[16px]">location_on</span>
+                  {selectedGroup.location || 'Not Specified'}
+                </strong>
+              </div>
+              <div className="border-t border-outline-variant/30 pt-2.5">
+                <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Description</span>
+                <p className="text-on-surface-variant text-xs mt-0.5 leading-normal">{selectedGroup.desc || 'No description provided.'}</p>
+              </div>
             </div>
 
-            <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm space-y-2.5">
-              <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Physical Location</span>
-              <strong className="text-on-surface text-base font-semibold block flex items-center gap-1">
-                <span className="material-symbols-outlined text-primary text-[18px]">location_on</span>
-                {selectedGroup.location || 'Not Specified'}
-              </strong>
+            {/* Threshold Limits */}
+            <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm space-y-3">
+              <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Safety Threshold Limits</span>
+              <div className="space-y-2.5 font-body-md text-xs mt-2">
+                <div className="flex justify-between items-center py-1.5 border-b border-outline-variant/30">
+                  <span className="text-secondary font-medium">Temperature Limit:</span>
+                  <strong className="text-on-surface font-semibold">
+                    {selectedGroup.minTemp || 2.0}°C to {selectedGroup.maxTemp || 8.0}°C
+                  </strong>
+                </div>
+                <div className="flex justify-between items-center py-1.5 border-b border-outline-variant/30">
+                  <span className="text-secondary font-medium">Humidity Limit:</span>
+                  <strong className="text-on-surface font-semibold">
+                    {selectedGroup.minHum || 35.0}% to {selectedGroup.maxHum || 75.0}%
+                  </strong>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm space-y-2.5">
-              <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Description</span>
-              <p className="text-on-surface-variant text-sm block">{selectedGroup.desc || 'No description provided.'}</p>
+            {/* Contact Information */}
+            <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm space-y-3">
+              <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">Contact Information</span>
+              <div className="space-y-2.5 font-body-md text-xs mt-2">
+                <div className="flex justify-between items-center py-1.5 border-b border-outline-variant/30">
+                  <span className="text-secondary font-medium">Email:</span>
+                  <strong className="text-on-surface font-semibold select-all">
+                    {selectedGroup.email || 'Not Specified'}
+                  </strong>
+                </div>
+                <div className="flex justify-between items-center py-1.5">
+                  <span className="text-secondary font-medium">Mobile:</span>
+                  <strong className="text-on-surface font-semibold select-all">
+                    {selectedGroup.mobile || 'Not Specified'}
+                  </strong>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -272,39 +345,38 @@ const GroupsView = () => {
                                     warning
                                   </span>
                                 )}
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                                  sensor.status === 'online' 
-                                    ? 'text-status-green bg-status-green/10' 
-                                    : sensor.status === 'warning'
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${sensor.status === 'online'
+                                  ? 'text-status-green bg-status-green/10'
+                                  : sensor.status === 'warning'
                                     ? 'text-error bg-error/10 animate-pulse'
                                     : 'text-outline bg-outline-variant/30'
-                                }`}>
+                                  }`}>
                                   {sensor.status === 'warning' ? 'ALERT' : sensor.status.toUpperCase()}
                                 </span>
                               </div>
                             </td>
-                          <td className="py-3 px-6 text-center font-mono font-medium">{sensor.temp}°C</td>
-                          <td className="py-3 px-6 text-center font-mono font-medium">{sensor.hum}%</td>
-                          <td className="py-3 px-6 text-center font-mono font-medium">{sensor.batt}%</td>
-                          
-                          {/* Physical Location Note (New Feature requirement) */}
-                          <td className="py-3 px-6 font-medium text-on-surface-variant flex items-center gap-1 mt-1 border-r border-outline-variant/30">
-                            <span className="material-symbols-outlined text-[14px] text-secondary">location_on</span>
-                            {sensor.location || 'Not Specified'}
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <button
-                              onClick={() => handleDeleteSensor(sensor.id)}
-                              className="p-1 hover:bg-error-container/20 rounded-full text-secondary hover:text-error transition-all duration-200 active:scale-90"
-                              title={`Delete sensor ${sensor.id}`}
-                            >
-                              <span className="material-symbols-outlined text-[16px]">delete</span>
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
+                            <td className="py-3 px-6 text-center font-mono font-medium">{sensor.temp}°C</td>
+                            <td className="py-3 px-6 text-center font-mono font-medium">{sensor.hum}%</td>
+                            <td className="py-3 px-6 text-center font-mono font-medium">{sensor.batt}%</td>
+
+                            {/* Physical Location Note (New Feature requirement) */}
+                            <td className="py-3 px-6 font-medium text-on-surface-variant flex items-center gap-1 mt-1 border-r border-outline-variant/30">
+                              <span className="material-symbols-outlined text-[14px] text-secondary">location_on</span>
+                              {sensor.location || 'Not Specified'}
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <button
+                                onClick={() => handleDeleteSensor(sensor.id)}
+                                className="p-1 hover:bg-error-container/20 rounded-full text-secondary hover:text-error transition-all duration-200 active:scale-90"
+                                title={`Delete sensor ${sensor.id}`}
+                              >
+                                <span className="material-symbols-outlined text-[16px]">delete</span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -338,7 +410,7 @@ const GroupsView = () => {
                 type="text"
               />
             </div>
-            
+
             <button
               onClick={() => setShowModal(true)}
               className="bg-white border border-primary text-primary hover:bg-surface-container-low px-4 py-2 rounded font-body-md text-sm font-semibold transition-colors flex items-center space-x-2 active:scale-95 duration-100"
@@ -382,8 +454,8 @@ const GroupsView = () => {
                     </tr>
                   ) : (
                     filteredGroups.map((row) => (
-                      <tr 
-                        key={row.sno} 
+                      <tr
+                        key={row.sno}
                         onClick={() => setSelectedGroup(row)}
                         className="hover:bg-surface-container-lowest transition-colors cursor-pointer group"
                       >
@@ -391,17 +463,15 @@ const GroupsView = () => {
                         <td className="py-3.5 px-6 font-semibold text-primary group-hover:underline border-r border-outline-variant/30">
                           {row.name}
                         </td>
-                        
-                        {/* Facility Location Badge */}
-                        <td className="py-3.5 px-6 text-center border-r border-outline-variant/30 text-xs">
-                          <span className="px-2.5 py-1 bg-primary-container/10 text-primary border border-primary/25 rounded-full font-medium">
-                            📍 {row.location || 'Not Specified'}
-                          </span>
+
+                        {/* Facility Location */}
+                        <td className="py-3.5 px-6 text-center border-r border-outline-variant/30 text-xs font-semibold text-secondary">
+                          {row.location || 'Not Specified'}
                         </td>
-                        
+
                         <td className="py-3.5 px-6 text-on-surface-variant border-r border-outline-variant/30">{row.desc}</td>
                         <td className="py-3.5 px-6 text-center border-r border-outline-variant/30 text-xs">{row.registered}</td>
-                        
+
                         {/* Remove Action Button */}
                         <td className="py-3.5 px-6 text-center">
                           <button
@@ -438,44 +508,132 @@ const GroupsView = () => {
       {/* Add Group Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center animate-fadeIn">
-          <div className="bg-white rounded-xl shadow-lg border border-outline-variant max-w-md w-full overflow-hidden">
+          <div className="bg-white rounded-xl shadow-lg border border-outline-variant max-w-lg w-full overflow-hidden">
             <div className="px-6 py-4 bg-primary text-white flex justify-between items-center">
               <h3 className="font-bold text-lg">Add New Group</h3>
-              <button 
+              <button
                 onClick={() => setShowModal(false)}
                 className="hover:bg-white/10 p-1 rounded-full text-white"
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-            
-            <form onSubmit={handleAddGroupSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
-                  Group Name *
-                </label>
-                <input
-                  required
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                  placeholder="e.g. alert1"
-                />
+
+            <form onSubmit={handleAddGroupSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scrollbar">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Group Name*
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                    placeholder="e.g. GND West Block"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Facility Location
+                  </label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                    placeholder="e.g. Cold Room 2"
+                  />
+                </div>
               </div>
 
-              {/* Physical Location Input Field */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
-                  Facility Location
-                </label>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                  placeholder="e.g. Cold Room 2, Rack 3"
-                />
+              {/* Threshold limits: Temp */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Min Temp (°C)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={minTemp}
+                    onChange={(e) => setMinTemp(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Max Temp (°C)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={maxTemp}
+                    onChange={(e) => setMaxTemp(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Threshold limits: Humidity */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Min Humidity (%)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={minHum}
+                    onChange={(e) => setMinHum(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Max Humidity (%)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={maxHum}
+                    onChange={(e) => setMaxHum(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Contact Details */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Contact Mobile
+                  </label>
+                  <input
+                    type="tel"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                    placeholder="e.g. +1 555 1234"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
+                    Contact Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                    placeholder="e.g. contact@facility.com"
+                  />
+                </div>
               </div>
 
               <div>
@@ -485,7 +643,7 @@ const GroupsView = () => {
                 <textarea
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
-                  className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm h-24"
+                  className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm h-20"
                   placeholder="Describe this group's sensors..."
                 />
               </div>
@@ -517,65 +675,58 @@ const GroupsView = () => {
           <div className="bg-white rounded-xl shadow-lg border border-outline-variant max-w-md w-full overflow-hidden">
             <div className="px-6 py-4 bg-primary text-white flex justify-between items-center">
               <h3 className="font-bold text-lg">Add Sensor to Group: {selectedGroup.name}</h3>
-              <button 
+              <button
                 onClick={() => setShowSensorModal(false)}
                 className="hover:bg-white/10 p-1 rounded-full text-white"
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-            
+
             <form onSubmit={handleAddSensorSubmit} className="p-6 space-y-4">
-              <div>
+              <div className="relative">
                 <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
-                  Sensor ID *
+                  Sensor ID*
                 </label>
                 <input
                   required
                   type="text"
                   value={sensorId}
-                  onChange={(e) => setSensorId(e.target.value)}
+                  onChange={(e) => {
+                    setSensorId(e.target.value);
+                    setDropdownOpen(true);
+                  }}
+                  onFocus={() => setDropdownOpen(true)}
+                  onBlur={() => setTimeout(() => setDropdownOpen(false), 200)}
                   className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                  placeholder="e.g. H9B00100"
+                  placeholder="e.g. H9B00100 (type to search/add)"
                 />
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
-                    Temp (°C)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={sensorTemp}
-                    onChange={(e) => setSensorTemp(e.target.value)}
-                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
-                    Humidity (%)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={sensorHum}
-                    onChange={(e) => setSensorHum(e.target.value)}
-                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">
-                    Battery (%)
-                  </label>
-                  <input
-                    type="number"
-                    value={sensorBatt}
-                    onChange={(e) => setSensorBatt(e.target.value)}
-                    className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                  />
-                </div>
+                
+                {dropdownOpen && (
+                  <div className="absolute z-50 w-full mt-1 bg-white border border-outline-variant rounded-lg shadow-lg max-h-48 overflow-y-auto custom-scrollbar">
+                    {filteredAvailable.length === 0 ? (
+                      <div className="px-4 py-3 text-xs text-secondary italic">
+                        No match found. Submission will create new sensor "{sensorId}".
+                      </div>
+                    ) : (
+                      filteredAvailable.map(sensor => (
+                        <div
+                          key={sensor.id}
+                          onClick={() => {
+                            setSensorId(sensor.id);
+                            setDropdownOpen(false);
+                          }}
+                          className="px-4 py-2.5 text-xs text-on-surface hover:bg-primary/5 cursor-pointer flex justify-between items-center border-b border-outline-variant/30 last:border-0"
+                        >
+                          <span className="font-semibold text-primary">{sensor.id}</span>
+                          <span className="text-[10px] text-secondary">
+                            {sensor.group && sensor.group !== 'unassigned' ? `Group: ${sensor.group}` : 'Available (Unassigned)'}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Physical Location Note (New Feature Requirement) */}
@@ -588,7 +739,7 @@ const GroupsView = () => {
                   value={sensorLoc}
                   onChange={(e) => setSensorLoc(e.target.value)}
                   className="w-full px-3 py-2 border border-outline-variant rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-                  placeholder="e.g. Cold Room 2, Rack 5"
+                  placeholder="e.g. Rack 5"
                 />
               </div>
 

@@ -173,12 +173,12 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
   };
 
   return (
-    <div className="flex-1 flex overflow-hidden gap-6 relative h-full">
+    <div className="flex-1 flex flex-col md:flex-row overflow-visible md:overflow-hidden gap-6 relative h-auto md:h-full">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 opacity-10 pointer-events-none w-1/3 h-64 bg-gradient-to-bl from-primary-fixed-dim to-transparent rounded-bl-full" />
 
       {/* Left Panel: Sensor List */}
-      <section className="w-1/3 min-w-[280px] max-w-[340px] flex flex-col bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm z-10">
+      <section className="w-full md:w-1/3 min-w-0 md:min-w-[280px] md:max-w-[340px] h-[350px] md:h-auto flex flex-col bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm z-10 shrink-0">
         
         {/* Search */}
         <div className="p-4 border-b border-outline-variant bg-surface-container-lowest">
@@ -234,20 +234,20 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
                 <div
                   key={sensor.id}
                   onClick={() => handleSensorSelect(sensor)}
-                  className={`grid grid-cols-2 px-4 py-3 cursor-pointer transition-colors border-b border-outline-variant/40 ${
+                  className={`flex justify-between items-center gap-3 px-4 py-3 cursor-pointer transition-colors border-b border-outline-variant/40 ${
                     isSelected ? 'bg-primary/5 border-l-4 border-l-primary' : 'bg-white hover:bg-surface-container-highest'
                   }`}
                 >
-                  <div className="pl-1">
-                    <div className={`font-body-md text-sm ${isSelected ? 'text-primary font-semibold' : 'text-on-surface'}`}>
+                  <div className="min-w-0 flex-1 pl-1">
+                    <div className={`font-body-md text-sm truncate ${isSelected ? 'text-primary font-semibold' : 'text-on-surface'}`}>
                       {sensor.id}
                     </div>
                     {/* Location Badge on items */}
-                    <div className="text-[9px] text-secondary truncate w-28" title={`${sensor.facilityLocation || 'Not Specified'}, ${sensor.location || 'Not Specified'}`}>
+                    <div className="text-[9px] text-secondary truncate w-full" title={`${sensor.facilityLocation || 'Not Specified'}, ${sensor.location || 'Not Specified'}`}>
                       {sensor.facilityLocation || 'Not Specified'}, {sensor.location || 'Not Specified'}
                     </div>
                   </div>
-                  <div className="text-right flex items-center justify-end gap-1">
+                  <div className="text-right flex items-center justify-end gap-1.5 shrink-0 flex-wrap max-w-[60%]">
                     {selectedSensor && selectedSensor.id === sensor.id && (
                       <>
                         {sensor.isTrendBreachRisk && (
@@ -282,7 +282,7 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
                         warning
                       </span>
                     )}
-                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded tracking-wide shrink-0 ${
                       sensor.status === 'online' 
                         ? 'text-status-green bg-status-green/10' 
                         : sensor.status === 'warning'
@@ -300,10 +300,10 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
       </section>
 
       {/* Right Panel: Sensor Details & Graphs */}
-      <section className="flex-1 flex flex-col gap-5 overflow-hidden z-10">
+      <section className="flex-1 flex flex-col gap-5 overflow-visible md:overflow-hidden z-10">
         
         {/* Statistics & Summary Row */}
-        <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-outline-variant shadow-sm shrink-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-outline-variant shadow-sm shrink-0">
           <div className="flex gap-5 font-body-md text-xs">
             <div className="flex items-center gap-2 text-secondary font-medium">
               <span>Sensors</span>
@@ -342,7 +342,7 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
 
         {/* Selected Sensor View Area */}
         {selectedSensor && (
-          <div className="flex-1 flex flex-col gap-5 min-h-0">
+          <div className="flex-1 flex flex-col gap-5 min-h-0 md:overflow-y-auto custom-scrollbar pr-1.5">
             
             {/* Top Details & Logging coverage (Twin metrics) */}
             <div className="bg-white p-5 border border-outline-variant rounded-xl shadow-sm shrink-0 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -530,7 +530,7 @@ const SensorsView = ({ navigationTarget, clearNavigationTarget }) => {
             </div>
 
             {/* Chart Area Panel */}
-            <div className="flex-1 bg-white border border-outline-variant rounded-xl shadow-sm flex flex-col min-h-0 overflow-hidden">
+            <div className="flex-1 min-h-[350px] bg-white border border-outline-variant rounded-xl shadow-sm flex flex-col overflow-hidden">
               <div className="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest shrink-0">
                 <div className="flex gap-6 text-[10px] text-secondary font-bold uppercase tracking-wider">
                   <div>

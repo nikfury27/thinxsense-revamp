@@ -60,7 +60,7 @@ function App() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-[240px] h-full overflow-hidden bg-surface">
+      <div className="flex-1 flex flex-col ml-[72px] lg:ml-[240px] h-full overflow-hidden bg-surface">
         {/* Top AppBar */}
         <Header />
 
