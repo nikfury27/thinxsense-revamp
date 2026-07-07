@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../api/apiService';
+import { calculateAlertESI } from '../utils/esiCalculator';
 
 export const useTopExcursions = () => {
   const [excursions, setExcursions] = useState([]);
@@ -14,11 +15,7 @@ export const useTopExcursions = () => {
         ]);
         
         const withEsi = alertsRes.map(alert => {
-          const esiScore = alert.param === 'Temperature' && alert.deviation 
-            ? parseFloat((alert.deviation * alert.duration).toFixed(1)) 
-            : alert.param === 'Humidity' && alert.deviation
-            ? parseFloat((alert.deviation * (alert.duration / 10)).toFixed(1))
-            : 0;
+          const esiScore = calculateAlertESI(alert);
 
           let validationVerdict = 'Isolated';
           const alertSensor = sensorsRes.find(s => s.id === alert.sensor);

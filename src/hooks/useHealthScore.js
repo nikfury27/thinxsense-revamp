@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../api/apiService';
+import { calculateAlertESI } from '../utils/esiCalculator';
 
 // Tuning Constants - Flagged for compliance team sign-off
 export const WEIGHTS = {
@@ -68,19 +69,8 @@ export const useHealthScore = (selectedGroupId = 'all') => {
           const tempAlerts = groupAlerts.filter(a => a.param === 'Temperature');
           const humAlerts = groupAlerts.filter(a => a.param === 'Humidity');
 
-          const roomTempESI = tempAlerts.reduce((acc, a) => {
-            const deviation = a.deviation || 0;
-            const duration = a.duration || 0;
-            const esi = parseFloat((deviation * duration).toFixed(1));
-            return acc + esi;
-          }, 0.0);
-
-          const roomHumESI = humAlerts.reduce((acc, a) => {
-            const deviation = a.deviation || 0;
-            const duration = a.duration || 0;
-            const esi = parseFloat((deviation * (duration / 10)).toFixed(1));
-            return acc + esi;
-          }, 0.0);
+          const roomTempESI = tempAlerts.reduce((acc, a) => acc + calculateAlertESI(a), 0.0);
+          const roomHumESI = humAlerts.reduce((acc, a) => acc + calculateAlertESI(a), 0.0);
 
           const tempSeverityClearance = 100.0 * (1.0 - Math.min(1.0, roomTempESI / TEMP_ESI_CEILING));
           const humSeverityClearance = 100.0 * (1.0 - Math.min(1.0, roomHumESI / HUM_ESI_CEILING));

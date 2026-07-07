@@ -183,7 +183,13 @@ export const initialAlerts = [
     deviation: 6.2, 
     duration: 45, 
     location: 'Cold Room 2, Rack 3',
-    room: 'Room B (Severe Excursion)'
+    room: 'Room B (Severe Excursion)',
+    logs: [
+      { time: '5/26/2026, 2:25:00 PM', value: 25.0 },
+      { time: '5/26/2026, 2:35:00 PM', value: 27.0 },
+      { time: '5/26/2026, 2:50:00 PM', value: 30.0 },
+      { time: '5/26/2026, 3:10:00 PM', value: 31.2 }
+    ]
   },
   
   // Room A (Cold Room 1) spikes - low ESI (Duration: 5m, Max Deviation: 0.5°C -> ESI: 2.5)
@@ -283,6 +289,13 @@ export const initialAlerts = [
     deviation: 4.6, 
     duration: 60, 
     location: 'Cold Room 3, Shelf A',
-    room: 'Cold Room 3'
+    room: 'Cold Room 3',
+    logs: [
+      { time: '5/26/2026, 2:10:00 PM', value: 25.0 },
+      { time: '5/26/2026, 2:20:00 PM', value: 27.0 },
+      { time: '5/26/2026, 2:35:00 PM', value: 28.5 },
+      { time: '5/26/2026, 2:55:00 PM', value: 29.2 },
+      { time: '5/26/2026, 3:10:00 PM', value: 29.6 }
+    ]
   }
 ];
