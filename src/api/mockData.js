@@ -268,5 +268,21 @@ export const initialAlerts = [
     duration: 120,
     location: 'Cold Room 3, Shelf B',
     room: 'Cold Room 3'
+  },
+  { 
+    id: 'ALT-9860', 
+    sensor: 'BRR00003', 
+    sensorName: 'BRR00003', 
+    time: '5/26/2026, 3:10:00 PM', 
+    param: 'Temperature', 
+    val: '29.6', 
+    threshold: '> 25°C', 
+    state: 'unacknowledged', 
+    arrow: 'upward', 
+    humVal: '39',
+    deviation: 4.6, 
+    duration: 60, 
+    location: 'Cold Room 3, Shelf A',
+    room: 'Cold Room 3'
   }
 ];

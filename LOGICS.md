@@ -142,7 +142,55 @@ const isBatterySwapRisk = batteryDaysRemaining <= 5; // Flag swap timeline
 
 ---
 
-## 5. Scaling to Real-Time Production (Next Steps)
+## 5. Visual Presentation Lens System & Facility Health Index
+### Problem Statement
+Standard monitoring dashboards either show too many raw parameters to executives, or bury critical incidents under simple averages. We need a way to roll up different telemetry metrics (connection status, temperature violations, battery life) into a single, reliable "Health Index" that remains accurate whether looking at a single refrigerator room or a global facility.
+
+### Solution & Calculation Logic
+The Executive visual lens implements a tiered rollup: it calculates metrics for each **individual room (group)** first, then averages them to find the facility-wide score. This ensures that localized failures are not diluted or masked by other large, healthy spaces.
+
+#### A. Active Room Coverage
+Measures the uptime of the monitoring sensors in a room:
+$$\text{Room Coverage} = \frac{\text{Online Sensors in Room}}{\text{Total Assigned Sensors in Room}} \times 100$$
+
+#### B. Verified Compliance
+Adjusts raw threshold compliance by data coverage to penalize communication gaps or offline states:
+$$\text{Verified Compliance (Room)} = \frac{\text{Room Coverage} \times \text{Room Raw Compliance}}{100}$$
+*   *Room Raw Compliance*: The average percentage of time each sensor in the room remained within safety thresholds.
+
+#### C. Severity Clearance
+Measures the absence of active excursions. We normalize temperature and humidity deviations against distinct ceilings separately to prevent mixing unit metrics:
+$$\text{Temp Severity Clearance} = 100 \times \left(1.0 - \min\left(1.0, \frac{\text{Active Room Temp ESI}}{\text{TEMP\_ESI\_CEILING}}\right)\right)$$
+$$\text{Hum Severity Clearance} = 100 \times \left(1.0 - \min\left(1.0, \frac{\text{Active Room Hum ESI}}{\text{HUM\_ESI\_CEILING}}\right)\right)$$
+$$\text{Severity Clearance (Room)} = \frac{\text{Temp Severity Clearance} + \text{Hum Severity Clearance}}{2}$$
+*   **Constants**: `TEMP_ESI_CEILING = 300.0` and `HUM_ESI_CEILING = 100.0` represent critical, high-risk breaches (e.g. 50 mins at $+6.0^\circ\text{C}$ over threshold).
+
+#### D. Room Health Score
+Blends compliance, coverage, and severity clearance into a single value, clamped defensively to `[0.0, 100.0]`:
+$$\text{Room Health Score} = 0.4 \times \text{Verified Compliance (Room)} + 0.3 \times \text{Room Coverage} + 0.3 \times \text{Severity Clearance (Room)}$$
+
+#### E. Facility Health Score Rollup
+The headline facility-wide score is the equal-weighted average of all room scores:
+$$\text{Facility Health Score} = \text{Average}(\text{Room Health Score for all Rooms})$$
+
+---
+
+### Code Implementation
+Calculated dynamically in [useHealthScore.js](file:///c:/Users/NikhilM/Desktop/thinxsense%20revamp/src/hooks/useHealthScore.js):
+```javascript
+const tempSeverityClearance = 100.0 * (1.0 - Math.min(1.0, roomTempESI / TEMP_ESI_CEILING));
+const humSeverityClearance = 100.0 * (1.0 - Math.min(1.0, roomHumESI / HUM_ESI_CEILING));
+const severityClearance = parseFloat(((tempSeverityClearance + humSeverityClearance) / 2).toFixed(1));
+
+const roomHealthScoreVal = (WEIGHTS.verifiedCompliance * verifiedCompliancePct) +
+                          (WEIGHTS.coverage * coveragePct) +
+                          (WEIGHTS.severity * severityClearance);
+const roomHealthScore = parseFloat(Math.max(0.0, Math.min(100.0, roomHealthScoreVal)).toFixed(1));
+```
+
+---
+
+## 6. Scaling to Real-Time Production (Next Steps)
 When deploying these features to production with high-frequency MQTT/REST streams:
 
 1.  **Excursion Severity (ESI)**: Calculate ESI in the backend database database using time-series integration (like PostgreSQL TimescaleDB or InfluxDB). Rather than using static averages, integrate the curve mathematically:
