@@ -171,7 +171,7 @@ const FacilityFloorPlan = ({ facility, allSensors, onBack, onNavigate }) => {
                   : 'bg-white border border-outline-variant text-secondary hover:bg-surface-container-low'
               }`}
             >
-              {g.location || g.name}
+              {g.name}
             </button>
           ))}
         </div>
