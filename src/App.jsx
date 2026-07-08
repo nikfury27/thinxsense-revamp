@@ -7,6 +7,7 @@ import SensorsView from './views/SensorsView';
 import AlertsView from './views/AlertsView';
 import UsersView from './views/UsersView';
 import GatewaysView from './views/GatewaysView';
+import ThinxVerseView from './views/ThinxVerseView';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -46,6 +47,8 @@ function App() {
             clearNavigationTarget={() => setNavigationTarget(null)} 
           />
         );
+      case 'thinxverse':
+        return <ThinxVerseView onNavigate={handleNavigate} />;
       default:
         return <DashboardView onNavigate={handleNavigate} />;
     }

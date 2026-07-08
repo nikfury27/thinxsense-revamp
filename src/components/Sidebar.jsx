@@ -3,6 +3,7 @@ import React from 'react';
 const Sidebar = ({ currentView, onViewChange }) => {
   const menuItems = [
     { id: 'home', label: 'Home', icon: 'home' },
+    { id: 'thinxverse', label: 'ThinxVerse', icon: 'explore' },
     { id: 'groups', label: 'Groups', icon: 'group_work' },
     { id: 'sensors', label: 'Sensors', icon: 'sensors' },
     { id: 'alerts', label: 'Alerts', icon: 'notifications_active' },
