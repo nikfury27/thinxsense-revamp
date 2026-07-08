@@ -158,13 +158,13 @@ export const initialSensors = [
   { id: 'H9B00047', name: 'H9B00047', temp: 23.8, hum: 39.8, batt: 95, lastSeen: '4 mins ago', status: 'online', group: 'alert1', location: 'Rack 2', history: generateHistory(23, 40), complianceScore: 100.0, dailyDrainRate: 0.9 },
 
   { id: 'H9B00022', name: 'H9B00022', temp: 22.0, hum: 30.1, batt: 100, lastSeen: '1 hr ago', status: 'offline', group: 'wewe', location: 'Shelf B', history: generateHistory(22, 30), complianceScore: 92.0, dailyDrainRate: 1.2 },
-  { id: 'H9B00067', name: 'H9B00067', temp: 26.5, hum: 40.2, batt: 76, lastSeen: 'Just now', status: 'online', group: 'Group', location: 'Door', history: generateHistory(26, 40), complianceScore: 98.7, dailyDrainRate: 1.6 },
-  { id: 'H9B00089', name: 'H9B00089', temp: 27.8, hum: 39.5, batt: 82, lastSeen: '10 mins ago', status: 'online', group: 'Group', location: 'Freezer', history: generateHistory(27, 39), complianceScore: 99.2, dailyDrainRate: 1.4 },
+  { id: 'H9B00067', name: 'H9B00067', temp: 26.5, hum: 40.2, batt: 76, lastSeen: 'Just now', status: 'warning', group: 'Group', location: 'Door', history: generateHistory(26, 40), complianceScore: 98.7, dailyDrainRate: 1.6 },
+  { id: 'H9B00089', name: 'H9B00089', temp: 27.8, hum: 39.5, batt: 82, lastSeen: '10 mins ago', status: 'warning', group: 'Group', location: 'Freezer', history: generateHistory(27, 39), complianceScore: 99.2, dailyDrainRate: 1.4 },
   
   // Active warnings in werrrsdsddf for group agreement
   { id: 'BRR00001', name: 'BRR00001', temp: 28.5, hum: 35.0, batt: 92, lastSeen: '12 mins ago', status: 'warning', group: 'werrrsdsddf', location: 'Rack C', history: generateHistory(28, 35), complianceScore: 94.0, dailyDrainRate: 1.8 },
   { id: 'BRR00002', name: 'BRR00002', temp: 21.3, hum: 36.2, batt: 75, lastSeen: '40 mins ago', status: 'offline', group: 'co2sdasdf', location: 'Table 3', history: [], complianceScore: 90.0, dailyDrainRate: 2.0 },
-  { id: 'BRR00003', name: 'BRR00003', temp: 29.6, hum: 39.0, batt: 84, lastSeen: 'Just now', status: 'offline', group: 'wewe', location: 'Shelf A', history: [], complianceScore: 0.0, dailyDrainRate: 2.2 },
+  { id: 'BRR00003', name: 'BRR00003', temp: 29.6, hum: 39.0, batt: 84, lastSeen: '2 hrs ago', status: 'offline', group: 'wewe', location: 'Shelf A', history: [], complianceScore: 0.0, dailyDrainRate: 2.2 },
   { id: 'BRR00004', name: 'BRR00004', temp: 22.5, hum: 41.0, batt: 63, lastSeen: '2 hrs ago', status: 'offline', group: 'alert1', location: 'Rack 1', history: [], complianceScore: 94.0, dailyDrainRate: 2.4 },
   { id: 'BRR00005', name: 'BRR00005', temp: 29.9, hum: 37.0, batt: 50, lastSeen: '1 day ago', status: 'offline', group: 'Group', location: 'Desk', history: [], complianceScore: 95.0, dailyDrainRate: 2.8 }
 ];
