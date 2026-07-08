@@ -61,13 +61,28 @@ const WeatherBadge = ({ lat, lng }) => {
 };
 
 // Facility List Card
+const isOpenNow = (operatingHours, timezone) => {
+  const now = new Date();
+  const localStr = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false
+  }).format(now);
+  // localStr is "HH:MM" — compare numerically
+  const [h, m] = localStr.split(':').map(Number);
+  const nowMins = h * 60 + m;
+  const [oh, om] = operatingHours.open.split(':').map(Number);
+  const [ch, cm] = operatingHours.close.split(':').map(Number);
+  const openMins  = oh * 60 + om;
+  const closeMins = ch * 60 + cm;
+  // Handle midnight-spanning shifts (e.g. 00:00–23:59 is always open)
+  return closeMins >= openMins
+    ? nowMins >= openMins && nowMins <= closeMins
+    : nowMins >= openMins || nowMins <= closeMins;
+};
+
 const FacilityCard = ({ facility, allSensors, onClick }) => {
-  const isOpen = facility.operatingHours === '24/7' || (() => {
-    const now = new Intl.DateTimeFormat('en-US', {
-      timeZone: facility.timezone, hour: '2-digit', minute: '2-digit', hour12: false
-    }).format(new Date());
-    return now >= facility.operatingHours.open && now <= facility.operatingHours.close;
-  })();
+  const is24h = facility.operatingHours.open === '00:00' && facility.operatingHours.close === '23:59';
+  const isOpen = is24h || isOpenNow(facility.operatingHours, facility.timezone);
+  const sensorCount = allSensors.filter(s => facility.groups.map(g => g.name).includes(s.group)).length;
 
   return (
     <div
@@ -77,7 +92,7 @@ const FacilityCard = ({ facility, allSensors, onClick }) => {
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="min-w-0">
           <h3 className="font-bold text-base text-on-surface truncate">{facility.name}</h3>
-          <p className="text-xs text-on-surface-variant mt-0.5 truncate">{facility.address}</p>
+          <p className="text-xs text-on-surface-variant mt-0.5 truncate">{facility.city}, {facility.country}</p>
         </div>
         <FacilityStatusChip groups={facility.groups} allSensors={allSensors} />
       </div>
@@ -94,24 +109,22 @@ const FacilityCard = ({ facility, allSensors, onClick }) => {
         <div>
           <span className="text-secondary block">Operating Hours</span>
           <span className="font-semibold text-on-surface">
-            {facility.operatingHours === '24/7' ? '24/7' : `${facility.operatingHours.open} – ${facility.operatingHours.close}`}
+            {is24h ? '24 / 7' : `${facility.operatingHours.open} – ${facility.operatingHours.close}`}
             <span className={`ml-1.5 text-[10px] font-bold ${isOpen ? 'text-status-green' : 'text-error'}`}>
               {isOpen ? '● Open' : '● Closed'}
             </span>
           </span>
         </div>
         <div>
-          <span className="text-secondary block">Dimensions</span>
+          <span className="text-secondary block">Rooms</span>
           <span className="font-semibold text-on-surface">
-            {facility.dimensions.width}{facility.dimensions.unit} × {facility.dimensions.length}{facility.dimensions.unit}
+            {facility.groups.length} room{facility.groups.length !== 1 ? 's' : ''}
           </span>
         </div>
       </div>
 
       <div className="mt-3 pt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs text-secondary">
-        <span>{facility.groups.length} room{facility.groups.length !== 1 ? 's' : ''} · {
-          allSensors.filter(s => facility.groups.map(g => g.name).includes(s.group)).length
-        } sensors</span>
+        <span>{sensorCount} sensor{sensorCount !== 1 ? 's' : ''} across {facility.groups.length} room{facility.groups.length !== 1 ? 's' : ''}</span>
         <span className="flex items-center gap-1 text-primary font-semibold">
           View Floor Plan <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
         </span>

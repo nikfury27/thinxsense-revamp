@@ -272,3 +272,122 @@ export const initialAlerts = [
     room: 'Cold Room 3'
   }
 ];
+
+// ─── Shift Handover & Login Session Data ─────────────────────────────────────
+
+const now = new Date();
+const hoursAgo = (h) => new Date(now.getTime() - h * 60 * 60 * 1000).toISOString();
+
+// Current active shift handover record
+export const initialShiftHandover = {
+  id: 'SHD-001',
+  shiftName: 'Morning Shift',
+  shiftStart: hoursAgo(8),
+  shiftEnd: null, // still active
+  previousOperator: 'Rajesh K',
+  currentOperator: 'shwetha',
+  note: 'Compressor in Cold Room 3 restarted around 2:10 PM. Temperature is slowly returning to normal. Maintenance has been informed. Please continue monitoring Room 3 until the next shift.',
+  noteType: 'note', // 'note' | 'nothing' — 'nothing' = no badge
+  noteTimestamp: hoursAgo(0.5),
+  viewed: false,
+  highlights: [
+    '6 alerts raised during shift',
+    '5 alerts resolved',
+    'One temperature excursion remains active in Cold Room 2',
+    'Two sensors recovered (H9B00022, BRR00003)',
+    'Gateway GGWCL00060 offline since 16:26',
+    'No battery replacements required',
+  ],
+  pendingIssues: [
+    { sensor: 'H9B00045', room: 'Cold Room 2', issue: 'Critical temperature excursion remains active (31.2°C).' },
+    { sensor: 'GGWCL00060', room: 'Gateway', issue: 'Offline since 16:26. Manual reboot required on Rack 1.' },
+  ],
+};
+
+// Per-user login session state
+export const initialLoginSession = {
+  username: 'shwetha',
+  lastLoginAt: hoursAgo(12.33), // ~12h 20m ago
+  currentLoginAt: now.toISOString(),
+  summaryDismissed: false,
+};
+
+// ─── ThinxVerse: Facilities, Sensor Positions, Group Dimensions ───────────────
+
+export const initialFacilities = [
+  {
+    id: 'FAC-001',
+    name: 'Mumbai Cold Hub',
+    city: 'Mumbai',
+    country: 'India',
+    lat: 19.076,
+    lng: 72.877,
+    timezone: 'Asia/Kolkata',
+    operatingHours: { open: '06:00', close: '22:00' },
+    groupIds: ['werrrsdsddf', 'co2sdasdf'],
+  },
+  {
+    id: 'FAC-002',
+    name: 'Berlin Cold Room',
+    city: 'Berlin',
+    country: 'Germany',
+    lat: 52.52,
+    lng: 13.405,
+    timezone: 'Europe/Berlin',
+    operatingHours: { open: '08:00', close: '20:00' },
+    groupIds: ['wewe'],
+  },
+  {
+    id: 'FAC-003',
+    name: 'New York Warehouse',
+    city: 'New York',
+    country: 'USA',
+    lat: 40.712,
+    lng: -74.006,
+    timezone: 'America/New_York',
+    operatingHours: { open: '07:00', close: '23:00' },
+    groupIds: ['alert1'],
+  },
+  {
+    id: 'FAC-004',
+    name: 'Singapore Mega Hub',
+    city: 'Singapore',
+    country: 'Singapore',
+    lat: 1.352,
+    lng: 103.82,
+    timezone: 'Asia/Singapore',
+    operatingHours: { open: '00:00', close: '23:59' },
+    groupIds: ['Group'],
+  },
+];
+
+export const initialSensorPositions = {
+  // Mumbai — werrrsdsddf
+  'H9B00008': { x: 0.25, y: 0.30 },
+  'H9B00009': { x: 0.70, y: 0.25 },
+  'BRR00001': { x: 0.50, y: 0.65 },
+  // Mumbai — co2sdasdf
+  'H9B00012': { x: 0.40, y: 0.45 },
+  'BRR00002': { x: 0.75, y: 0.60 },
+  // Berlin — wewe
+  'H9B00021': { x: 0.35, y: 0.40 },
+  'H9B00022': { x: 0.65, y: 0.55 },
+  'BRR00003': { x: 0.50, y: 0.75 },
+  // NY — alert1
+  'H9B00045': { x: 0.30, y: 0.35 },
+  'H9B00046': { x: 0.60, y: 0.30 },
+  'H9B00047': { x: 0.55, y: 0.65 },
+  'BRR00004': { x: 0.80, y: 0.70 },
+  // Singapore — Group
+  'H9B00067': { x: 0.20, y: 0.50 },
+  'H9B00089': { x: 0.75, y: 0.40 },
+  'BRR00005': { x: 0.50, y: 0.80 },
+};
+
+export const initialGroupDimensions = {
+  'werrrsdsddf': { width: 120, length: 60,  unit: 'm' },
+  'co2sdasdf':   { width: 8,   length: 6,   unit: 'm' },
+  'wewe':        { width: 35,  length: 20,  unit: 'm' },
+  'alert1':      { width: 35,  length: 20,  unit: 'm' },
+  'Group':       { width: 200, length: 80,  unit: 'm' },
+};

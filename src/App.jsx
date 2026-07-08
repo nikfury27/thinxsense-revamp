@@ -8,72 +8,72 @@ import AlertsView from './views/AlertsView';
 import UsersView from './views/UsersView';
 import GatewaysView from './views/GatewaysView';
 import ThinxVerseView from './views/ThinxVerseView';
+import LoginScreen from './components/LoginScreen';
+import LoginSummaryModal from './components/LoginSummaryModal';
 
 function App() {
-  const [currentView, setCurrentView] = useState('home');
+  const [currentUser,      setCurrentUser]      = useState(null);   // null = logged out
+  const [showLoginSummary, setShowLoginSummary] = useState(false);
+  const [currentView,      setCurrentView]      = useState('home');
   const [navigationTarget, setNavigationTarget] = useState(null);
 
+  const handleLogin = (user) => {
+    setCurrentUser(user);
+    setShowLoginSummary(true);   // always show summary after login
+    setCurrentView('home');
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setShowLoginSummary(false);
+    setCurrentView('home');
+  };
+
   const handleNavigate = (view, targetId = null) => {
-    if (targetId) {
-      setNavigationTarget({ view, id: targetId });
-    } else {
-      setNavigationTarget(null);
-    }
+    setNavigationTarget(targetId ? { view, id: targetId } : null);
     setCurrentView(view);
   };
 
-  // Page Routing resolver
+  // Not logged in — show login screen
+  if (!currentUser) return <LoginScreen onLogin={handleLogin} />;
+
   const renderActiveView = () => {
     switch (currentView) {
-      case 'home':
-        return <DashboardView onNavigate={handleNavigate} />;
-      case 'groups':
-        return <GroupsView />;
-      case 'sensors':
-        return (
-          <SensorsView 
-            navigationTarget={navigationTarget} 
-            clearNavigationTarget={() => setNavigationTarget(null)} 
-          />
-        );
-      case 'alerts':
-        return <AlertsView />;
-      case 'users':
-        return <UsersView />;
-      case 'gateways':
-        return (
-          <GatewaysView 
-            navigationTarget={navigationTarget} 
-            clearNavigationTarget={() => setNavigationTarget(null)} 
-          />
-        );
-      case 'thinxverse':
-        return <ThinxVerseView onNavigate={handleNavigate} />;
-      default:
-        return <DashboardView onNavigate={handleNavigate} />;
+      case 'home':       return <DashboardView onNavigate={handleNavigate} />;
+      case 'groups':     return <GroupsView />;
+      case 'sensors':    return <SensorsView navigationTarget={navigationTarget} clearNavigationTarget={() => setNavigationTarget(null)} />;
+      case 'alerts':     return <AlertsView />;
+      case 'users':      return <UsersView />;
+      case 'gateways':   return <GatewaysView navigationTarget={navigationTarget} clearNavigationTarget={() => setNavigationTarget(null)} />;
+      case 'thinxverse': return <ThinxVerseView onNavigate={handleNavigate} />;
+      default:           return <DashboardView onNavigate={handleNavigate} />;
     }
   };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background text-on-surface select-none">
-      {/* Fixed Left Navigation Sidebar */}
-      <Sidebar 
-        currentView={currentView} 
-        onViewChange={setCurrentView} 
+      <Sidebar
+        currentView={currentView}
+        onViewChange={setCurrentView}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-[72px] lg:ml-[240px] h-full overflow-hidden bg-surface">
-        {/* Top AppBar */}
-        <Header />
-
-        {/* Dynamic Page Canvas wrapper */}
+      <div className={`flex-1 flex flex-col ml-[72px] lg:ml-[240px] h-full overflow-hidden bg-surface transition-all duration-300 ${showLoginSummary ? 'blur-sm pointer-events-none' : ''}`}>
+        <Header currentUser={currentUser} />
         <main className="flex-1 overflow-y-auto p-margin-page bg-surface-container-low relative">
           <div className="max-w-7xl mx-auto h-full">
             {renderActiveView()}
           </div>
         </main>
       </div>
+
+      {showLoginSummary && (
+        <LoginSummaryModal
+          currentUser={currentUser}
+          onDismiss={() => setShowLoginSummary(false)}
+        />
+      )}
     </div>
   );
 }
