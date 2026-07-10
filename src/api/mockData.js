@@ -285,7 +285,7 @@ const hoursAgo = (h) => new Date(now.getTime() - h * 60 * 60 * 1000).toISOString
 // Current active shift handover record
 export const initialShiftHandover = {
   id: 'SHD-001',
-  shiftName: 'Morning Shift',
+  shiftName: 'Day Shift',
   shiftStart: hoursAgo(8),
   shiftEnd: null, // still active
   previousOperator: 'Rajesh K',
@@ -311,7 +311,7 @@ export const initialShiftHandover = {
 // Per-user login session state
 export const initialLoginSession = {
   username: 'shwetha',
-  lastLoginAt: hoursAgo(12.33), // ~12h 20m ago
+  lastLogoutAt: hoursAgo(16.5), // ~16h 30m ago
   currentLoginAt: now.toISOString(),
   summaryDismissed: false,
 };

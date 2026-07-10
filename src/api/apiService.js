@@ -335,15 +335,15 @@ export const apiService = {
     loginSession = {
       ...loginSession,
       summaryDismissed: true,
-      lastLoginAt: loginSession.currentLoginAt,
+      lastLogoutAt: loginSession.currentLoginAt,
     };
     return true;
   },
 
-  // Returns alerts raised between lastLoginAt and currentLoginAt
+  // Returns alerts raised between lastLogoutAt and currentLoginAt
   async getLoginActivitySummary() {
     await delay(200);
-    const from = new Date(loginSession.lastLoginAt);
+    const from = new Date(loginSession.lastLogoutAt);
     const to   = new Date(loginSession.currentLoginAt);
     const allSensors = sensors.map(enrichSensor);
 
@@ -370,7 +370,7 @@ export const apiService = {
     }, 0);
 
     return {
-      lastLoginAt: loginSession.lastLoginAt,
+      lastLogoutAt: loginSession.lastLogoutAt,
       currentLoginAt: loginSession.currentLoginAt,
       raisedAlerts,
       resolvedAlerts,

@@ -36,3 +36,21 @@
   background-image: linear-gradient(#c4c5d6 1px, transparent 1px), linear-gradient(90deg, #c4c5d6 1px, transparent 1px);
   background-size: 40px 40px;
 }
+
+/* Pulsating alert bubble ring animation */
+@keyframes alert-ping {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.animate-alert-ping {
+  animation: alert-ping 3.5s cubic-bezier(0.25, 0, 0, 1) infinite;
+}
+
+

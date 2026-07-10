@@ -6,16 +6,16 @@ const MOCK_USERS = [
     password: 'admin123',
     role: 'ADMIN',
     initials: 'S',
-    shift: 'Morning Shift · 08:00 – 16:00',
-    lastLoginAt: new Date(Date.now() - 12.33 * 60 * 60 * 1000).toISOString(),
+    shift: 'Day Shift · 09:30 – 18:30',
+    lastLogoutAt: new Date(Date.now() - 16.5 * 60 * 60 * 1000).toISOString(),
   },
   {
     username: 'rajesh',
     password: 'operator1',
     role: 'OPERATOR',
     initials: 'R',
-    shift: 'Night Shift · 00:00 – 08:00',
-    lastLoginAt: new Date(Date.now() - 8.5 * 60 * 60 * 1000).toISOString(),
+    shift: 'Night Shift · 21:30 – 06:30',
+    lastLogoutAt: new Date(Date.now() - 4.5 * 60 * 60 * 1000).toISOString(),
   },
 ];
 

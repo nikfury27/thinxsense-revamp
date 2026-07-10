@@ -13,8 +13,8 @@ export const handoverNoteStore = {
   shwetha: {
     from: 'Rajesh K',
     fromInitials: 'R',
-    shift: 'Night Shift · 00:00 – 08:00',
-    leftAt: '07:58 AM',
+    shift: 'Night Shift · 21:30 – 06:30',
+    leftAt: '06:28 AM',
     note: 'Compressor in Cold Room 3 restarted around 2:10 AM. Temperature is slowly returning to normal — currently at 24.1°C and dropping. Maintenance has been informed and will inspect at 9:00 AM. Please continue monitoring Room 3 closely.\n\nGateway GGWCL00060 went offline at 4:26 AM, data is buffered locally — needs manual reboot on Rack 1.\n\nH9B00045 in Cold Room 2 is still showing elevated readings (31.2°C). Based on neighbour comparison with H9B00046 (24.1°C) and H9B00047 (23.8°C), this appears to be a sensor fault rather than a room-wide excursion.',
   },
   // rajesh logs in → no note left by shwetha yet (she hasn't logged out)
@@ -161,9 +161,9 @@ const BatteryRow = ({ s }) => (
 const LoginSummaryModal = ({ onDismiss, currentUser }) => {
   const [tab, setTab] = useState('overview');
 
-  const last    = fmtDT(currentUser.lastLoginAt);
+  const last    = fmtDT(currentUser.lastLogoutAt);
   const current = fmtDT(currentUser.currentLoginAt);
-  const away    = timeAway(currentUser.lastLoginAt, currentUser.currentLoginAt);
+  const away    = timeAway(currentUser.lastLogoutAt, currentUser.currentLoginAt);
 
   const activeAlerts   = ALERTS.filter(a => a.state === 'unacknowledged');
   const resolvedAlerts = ALERTS.filter(a => a.state === 'acknowledged');
@@ -205,7 +205,7 @@ const LoginSummaryModal = ({ onDismiss, currentUser }) => {
         {/* Time strip */}
         <div className="grid grid-cols-3 gap-3 px-5 py-4 bg-surface-container-low border-b border-outline-variant shrink-0">
           <div>
-            <div className="text-[10px] text-secondary uppercase tracking-wider font-semibold mb-1">Last Login</div>
+            <div className="text-[10px] text-secondary uppercase tracking-wider font-semibold mb-1">Last Logout</div>
             <div className="font-bold text-sm text-on-surface">{last.date}</div>
             <div className="text-xs text-secondary">{last.time}</div>
           </div>

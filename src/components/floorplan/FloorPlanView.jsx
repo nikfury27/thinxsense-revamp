@@ -58,17 +58,17 @@ const drawZones = (canvas, sensors, positions, roomW, roomH, hoveredId = null) =
   placed.forEach(sensor => {
     const cx = positions[sensor.id].x * W;
     const cy = positions[sensor.id].y * H;
-    const v  = getSensorVisual(sensor);
+    const v = getSensorVisual(sensor);
     const [r, g, b] = v.glow;
     const radiusPx = getRadius();
 
     // Soft, pleasing gradient — gentle centre bloom, fades cleanly
     const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
-    grad.addColorStop(0,    `rgba(${r},${g},${b},0.38)`);
+    grad.addColorStop(0, `rgba(${r},${g},${b},0.38)`);
     grad.addColorStop(0.30, `rgba(${r},${g},${b},0.22)`);
     grad.addColorStop(0.60, `rgba(${r},${g},${b},0.10)`);
     grad.addColorStop(0.85, `rgba(${r},${g},${b},0.04)`);
-    grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+    grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -99,10 +99,10 @@ const drawZones = (canvas, sensors, positions, roomW, roomH, hoveredId = null) =
 // ─── Nice tick generator (like a chart axis) ──────────────────────────────────
 const getTicks = (totalUnits) => {
   const target = 6;
-  const raw    = totalUnits / target;
-  const mag    = Math.pow(10, Math.floor(Math.log10(raw || 1)));
-  const nice   = [1, 2, 5, 10].find(n => n * mag >= raw) * mag;
-  const ticks  = [];
+  const raw = totalUnits / target;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw || 1)));
+  const nice = [1, 2, 5, 10].find(n => n * mag >= raw) * mag;
+  const ticks = [];
   for (let v = 0; v <= totalUnits + 1e-9; v += nice) ticks.push(parseFloat(v.toFixed(4)));
   return ticks;
 };
@@ -113,12 +113,12 @@ const SensorHoverCard = ({ sensor, allSensors, groupName }) => {
   const neighbors = allSensors.filter(
     s => s.group === sensor.group && s.id !== sensor.id && s.status !== 'offline'
   );
-  const threshold   = BREACH_THRESHOLD;
-  const isOffline   = sensor.status === 'offline';
-  const deviation   = parseFloat((sensor.temp - threshold).toFixed(1));
+  const threshold = BREACH_THRESHOLD;
+  const isOffline = sensor.status === 'offline';
+  const deviation = parseFloat((sensor.temp - threshold).toFixed(1));
   // Offline sensors have no live excursion — stale temp readings must be ignored
   const isExcursion = !isOffline && sensor.temp > threshold;
-  const esiSoFar    = isExcursion ? parseFloat((deviation * 45).toFixed(1)) : null;
+  const esiSoFar = isExcursion ? parseFloat((deviation * 45).toFixed(1)) : null;
   const v = getSensorVisual(sensor);
 
   return (
@@ -133,12 +133,11 @@ const SensorHoverCard = ({ sensor, allSensors, groupName }) => {
             <div className="text-white/50 text-xs mt-0.5">{groupName} · {sensor.location}</div>
           </div>
         </div>
-        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
-          isOffline ? 'bg-white/10 text-white/50'
-          : isExcursion ? 'bg-[#ba1a1a] text-white'
-          : sensor.isTrendBreachRisk ? 'bg-[#92400e] text-[#fde68a]'
-          : 'bg-white/10 text-white/70'
-        }`}>
+        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${isOffline ? 'bg-white/10 text-white/50'
+            : isExcursion ? 'bg-[#ba1a1a] text-white'
+              : sensor.isTrendBreachRisk ? 'bg-[#92400e] text-[#fde68a]'
+                : 'bg-white/10 text-white/70'
+          }`}>
           {isOffline ? 'Offline' : isExcursion ? `Active · ${sensor.lastSeen}` : sensor.isTrendBreachRisk ? 'Approaching limit' : 'Normal'}
         </span>
       </div>
@@ -215,6 +214,14 @@ const SensorHoverCard = ({ sensor, allSensors, groupName }) => {
           </span>
         </div>
       )}
+      {sensor.isBatterySwapRisk && (
+        <div className="mx-3 mb-3 px-3 py-2.5 bg-red-950/40 border border-red-500/30 rounded-lg flex items-start gap-2">
+          <span className="material-symbols-outlined text-[16px] text-red-500 shrink-0 mt-0.5 animate-pulse">battery_alert</span>
+          <span className="text-[#ff6b6b] text-xs leading-snug">
+            <strong className="text-red-400 font-bold">Low Battery Alert: {sensor.batt}%</strong> remaining. Depletion forecast in ~{sensor.batteryDaysRemaining} days. Swap needed.
+          </span>
+        </div>
+      )}
     </div>
   );
 };
@@ -243,20 +250,28 @@ const Legend = ({ roomW, roomH, unit, useInterpolation, cols, rows }) => {
       {/* Approaching limit — yellow dot, green gradient */}
       <div className="flex items-start gap-2">
         <span className="w-3 h-3 rounded-full shrink-0 mt-0.5" style={{ background: '#f59e0b' }} />
-        <span className="text-on-surface-variant leading-tight">Approaching limit<br/><span className="text-[9px] text-outline">green zone, yellow dot</span></span>
+        <span className="text-on-surface-variant leading-tight">Approaching limit<br /><span className="text-[9px] text-outline">green zone, yellow dot</span></span>
       </div>
 
       {/* Isolated anomaly */}
       <div className="flex items-start gap-2 pt-1 border-t border-outline-variant/40">
         <span className="w-3 h-3 rounded-full shrink-0 mt-0.5 border-2 border-dashed border-[#f59e0b]" />
-        <span className="text-on-surface-variant leading-tight">Isolated anomaly<br/><span className="text-[9px] text-outline">neighbours in range</span></span>
+        <span className="text-on-surface-variant leading-tight">Isolated anomaly<br /><span className="text-[9px] text-outline">neighbours in range</span></span>
       </div>
       <div className="flex items-start gap-2">
         <span className="relative shrink-0 mt-0.5" style={{ width: 12, height: 12 }}>
           <span className="absolute inset-0 rounded-full" style={{ background: '#ef4444' }} />
           <span className="absolute rounded-full border-2 border-dashed border-[#f59e0b]" style={{ inset: -3 }} />
         </span>
-        <span className="text-on-surface-variant leading-tight ml-1">Breach + anomaly<br/><span className="text-[9px] text-outline">verify physically</span></span>
+        <span className="text-on-surface-variant leading-tight ml-1">Breach + anomaly<br /><span className="text-[9px] text-outline">verify physically</span></span>
+      </div>
+
+      {/* Battery low warning */}
+      <div className="flex items-start gap-2 pt-1 border-t border-outline-variant/40">
+        <span className="w-4.5 h-4.5 rounded-full bg-red-50 border border-red-500 flex items-center justify-center shrink-0 animate-pulse">
+          <span className="material-symbols-outlined text-[11px] text-red-600">battery_alert</span>
+        </span>
+        <span className="text-on-surface-variant leading-tight">Low Battery Alert<br /><span className="text-[9px] text-outline">blinks, &le; 5 days remaining</span></span>
       </div>
 
       <div className="pt-1 border-t border-outline-variant/40 space-y-1">
@@ -285,22 +300,37 @@ const Legend = ({ roomW, roomH, unit, useInterpolation, cols, rows }) => {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
-  const [positions,    setPositions]    = useState({});
-  const [dims,         setDims]         = useState({ width: 20, length: 15, unit: 'm' });
-  const [dimsForm,     setDimsForm]     = useState(null);
-  const [editMode,     setEditMode]     = useState(false);
+  const [positions, setPositions] = useState({});
+  const [dims, setDims] = useState({ width: 20, length: 15, unit: 'm' });
+  const [dimsForm, setDimsForm] = useState(null);
+  const [editMode, setEditMode] = useState(false);
   const [pendingPlace, setPendingPlace] = useState(null);
-  const [dragging,     setDragging]     = useState(null);
+  const [dragging, setDragging] = useState(null);
   const [hoveredSensor, setHoveredSensor] = useState(null);
-  const [hoverPos,     setHoverPos]     = useState({ x: 0, y: 0 });
-  const [canvasSize,   setCanvasSize]   = useState({ w: 600, h: 400 });
+  const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
+  const [canvasSize, setCanvasSize] = useState({ w: 600, h: 400 });
 
-  const zoneCanvasRef  = useRef(null);
-  const floorRef       = useRef(null);
-  const wrapRef        = useRef(null);
-  const roRef          = useRef(null);
-  const [floorWidth,   setFloorWidth]   = useState(0);
-  const [floorHeight,  setFloorHeight]  = useState(0);
+  const hoverCardRef = useRef(null);
+  const [cardDimensions, setCardDimensions] = useState({ width: 300, height: 350 });
+
+  useEffect(() => {
+    if (hoverCardRef.current) {
+      const rect = hoverCardRef.current.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        setCardDimensions({
+          width: rect.width,
+          height: rect.height
+        });
+      }
+    }
+  }, [hoveredSensor, hoverPos]);
+
+  const zoneCanvasRef = useRef(null);
+  const floorRef = useRef(null);
+  const wrapRef = useRef(null);
+  const roRef = useRef(null);
+  const [floorWidth, setFloorWidth] = useState(0);
+  const [floorHeight, setFloorHeight] = useState(0);
 
   const groupSensors = useMemo(
     () => allSensors.filter(s => s.group === group.name),
@@ -331,14 +361,14 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
     drawZones(zoneCanvasRef.current, groupSensors, positions, dims.width, dims.length, hoveredSensor?.id ?? null);
   }, [groupSensors, positions, dims, canvasSize, hoveredSensor]);
 
-  const xTicks = useMemo(() => getTicks(dims.width),  [dims.width]);
+  const xTicks = useMemo(() => getTicks(dims.width), [dims.width]);
   const yTicks = useMemo(() => getTicks(dims.length), [dims.length]);
 
   const getFloorCoords = useCallback((e) => {
     const rect = floorRef.current.getBoundingClientRect();
     return {
       x: Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)),
-      y: Math.max(0, Math.min(1, (e.clientY - rect.top)  / rect.height)),
+      y: Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height)),
     };
   }, []);
 
@@ -376,9 +406,9 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
 
   const handleSaveDims = async () => {
     const d = {
-      width:  parseFloat(dimsForm.width)  || dims.width,
+      width: parseFloat(dimsForm.width) || dims.width,
       length: parseFloat(dimsForm.length) || dims.length,
-      unit:   dimsForm.unit,
+      unit: dimsForm.unit,
     };
     setDims(d);
     setDimsForm({ ...d });
@@ -386,15 +416,31 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
   };
 
   const unplacedSensors = groupSensors.filter(s => !positions[s.id]);
-  const placedSensors   = groupSensors.filter(s =>  positions[s.id]);
+  const placedSensors = groupSensors.filter(s => positions[s.id]);
   const useInterpolation = placedSensors.length >= 6;
   const DOT = 14;
 
   // Zone grid dimensions — computed once, shared between SVG and Legend
-  const cols = Math.max(2, Math.min(5, Math.round(dims.width  / 30)));
+  const cols = Math.max(2, Math.min(5, Math.round(dims.width / 30)));
   const rows = Math.max(2, Math.min(4, Math.round(dims.length / 30)));
-  const zoneW = parseFloat((dims.width  / cols).toFixed(1));
+  const zoneW = parseFloat((dims.width / cols).toFixed(1));
   const zoneH = parseFloat((dims.length / rows).toFixed(1));
+
+  // Calculate fit for the hover card container
+  const cardW = cardDimensions.width;
+  const cardH = cardDimensions.height;
+
+  let leftPos = hoverPos.x + 16;
+  if (leftPos + cardW > window.innerWidth - 16) {
+    leftPos = hoverPos.x - cardW - 16;
+  }
+  leftPos = Math.max(16, leftPos);
+
+  let topPos = hoverPos.y - 20;
+  if (topPos + cardH > window.innerHeight - 16) {
+    topPos = window.innerHeight - cardH - 16;
+  }
+  topPos = Math.max(16, topPos);
 
   return (
     <div className="flex flex-col gap-3 h-full" ref={wrapRef}>
@@ -415,11 +461,10 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
         </div>
         <button
           onClick={() => { setEditMode(v => !v); setPendingPlace(null); }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
-            editMode
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors ${editMode
               ? 'bg-primary text-white'
               : 'bg-white border border-outline-variant text-secondary hover:bg-surface-container-low'
-          }`}
+            }`}
         >
           <span className="material-symbols-outlined text-[16px]">{editMode ? 'done' : 'edit'}</span>
           {editMode ? 'Done Editing' : 'Edit Layout'}
@@ -463,11 +508,10 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
             <button
               key={s.id}
               onClick={() => setPendingPlace(pendingPlace === s.id ? null : s.id)}
-              className={`px-2 py-0.5 rounded font-mono font-semibold border transition-colors ${
-                pendingPlace === s.id
+              className={`px-2 py-0.5 rounded font-mono font-semibold border transition-colors ${pendingPlace === s.id
                   ? 'bg-primary text-white border-primary'
                   : 'bg-white border-outline-variant text-on-surface hover:bg-primary/5'
-              }`}
+                }`}
             >
               {s.id}
             </button>
@@ -518,9 +562,8 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
             {/* Floor plan box — fixed sensible height, scales with viewport */}
             <div
               ref={floorRef}
-              className={`relative flex-1 bg-[#f4f6fb] border-2 rounded-xl overflow-hidden ${
-                editMode ? 'border-primary cursor-crosshair' : 'border-outline-variant'
-              }`}
+              className={`relative flex-1 bg-[#f4f6fb] border-2 rounded-xl overflow-hidden ${editMode ? 'border-primary cursor-crosshair' : 'border-outline-variant'
+                }`}
               style={{ height: 'clamp(320px, 55vh, 600px)' }}
               onClick={handleFloorClick}
               onMouseMove={handleMouseMove}
@@ -593,57 +636,112 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
                 const pos = positions[sensor.id];
                 if (!pos) return null;
                 const classification = classifySensor(sensor, allSensors);
-                const isOffline  = sensor.status === 'offline';
-                const isBreach   = sensor.status === 'warning';
+                const isOffline = sensor.status === 'offline';
+                const isBreach = sensor.status === 'warning';
                 // Anomaly ring shown for any non-offline sensor with isolated_anomaly
                 // Dot color: breach always red, anomaly-only → yellow, else from getSensorVisual
-                const isAnomaly  = !isOffline && classification === 'isolated_anomaly';
-                const v          = getSensorVisual(sensor);
-                const dotColor   = isBreach ? '#ef4444' : isAnomaly ? '#f59e0b' : v.dot;
-                const isTrend    = !isOffline && !isBreach && sensor.isTrendBreachRisk;
+                const isAnomaly = !isOffline && classification === 'isolated_anomaly';
+                const v = getSensorVisual(sensor);
+                const dotColor = isBreach ? '#ef4444' : isAnomaly ? '#f59e0b' : v.dot;
+                const isTrend = !isOffline && !isBreach && sensor.isTrendBreachRisk;
 
                 return (
                   <div
                     key={sensor.id}
-                    className="absolute z-10"
-                    style={{ left: `${pos.x * 100}%`, top: `${pos.y * 100}%`, transform: 'translate(-50%,-50%)' }}
+                    className="absolute z-10 select-none"
+                    style={{
+                      left: `${pos.x * 100}%`,
+                      top: `${pos.y * 100}%`,
+                      transform: 'translate(-50%,-50%)',
+                      width: DOT,
+                      height: DOT
+                    }}
                     onMouseEnter={e => handleSensorHover(e, sensor)}
                     onMouseLeave={() => setHoveredSensor(null)}
                     onMouseDown={e => handleMouseDown(e, sensor.id)}
                     onClick={e => { if (!editMode) { e.stopPropagation(); onSensorClick(sensor.id); } }}
                   >
+                    {/* Pulsating alert bubble animations for warning/breach state */}
+                    {isBreach && (
+                      <>
+                        <div
+                          className="absolute pointer-events-none animate-alert-ping"
+                          style={{
+                            width: 38,
+                            height: 38,
+                            borderRadius: '50%',
+                            top: -12,
+                            left: -12,
+                            background: 'radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0) 70%)',
+                            border: '1.5px solid rgba(239,68,68,0.4)',
+                          }}
+                        />
+                        <div
+                          className="absolute pointer-events-none animate-alert-ping"
+                          style={{
+                            width: 38,
+                            height: 38,
+                            borderRadius: '50%',
+                            top: -12,
+                            left: -12,
+                            background: 'radial-gradient(circle, rgba(239,68,68,0.1) 0%, rgba(239,68,68,0) 70%)',
+                            border: '1px solid rgba(239,68,68,0.2)',
+                            animationDelay: '1.75s',
+                          }}
+                        />
+                      </>
+                    )}
+
                     {/* Trend-risk: subtle pulsing amber ring to signal approaching limit */}
                     {isTrend && (
                       <div
                         className="absolute rounded-full pointer-events-none animate-pulse"
                         style={{
-                          width: DOT + 8, height: DOT + 8, top: -4, left: -4,
+                          top: -4, left: -4, right: -4, bottom: -4,
                           background: 'rgba(245,158,11,0.18)',
                           border: '1.5px solid rgba(245,158,11,0.45)',
                         }}
                       />
                     )}
+
+                    {/* Main sensor dot */}
                     <div
-                      className={`rounded-full border-2 border-white shadow-md transition-transform ${
-                        editMode ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer hover:scale-125'
-                      }`}
+                      className={`w-full h-full rounded-full border-2 border-white shadow-md transition-transform ${editMode ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer hover:scale-125'
+                        }`}
                       style={{
-                        width: DOT, height: DOT,
                         background: dotColor,
                         boxShadow: `0 0 7px ${dotColor}aa`,
                       }}
                     />
+
+                    {/* Isolated anomaly ring */}
                     {isAnomaly && (
                       <div
                         className="absolute rounded-full border-2 border-dashed pointer-events-none animate-pulse"
                         style={{
-                          width: DOT + 10, height: DOT + 10, top: -5, left: -5,
-                          // Red-tinted ring for breach+anomaly, amber for pure anomaly
-                          borderColor: isBreach ? 'rgba(245,158,11,0.85)' : 'rgba(245,158,11,0.85)',
+                          top: -5, left: -5, right: -5, bottom: -5,
+                          borderColor: 'rgba(245,158,11,0.85)',
                           boxShadow: isBreach ? '0 0 0 1.5px rgba(239,68,68,0.25)' : 'none',
                         }}
                       />
                     )}
+
+                    {/* Low battery warning sign overlay */}
+                    {sensor.isBatterySwapRisk && (
+                      <div
+                        className="absolute z-20 pointer-events-none select-none flex items-center justify-center bg-red-50 border border-red-500 rounded-full w-[18px] h-[18px] shadow-sm animate-pulse"
+                        style={{
+                          top: -9,
+                          left: 11,
+                        }}
+                        title={`Battery critical: ${sensor.batt}% (${sensor.batteryDaysRemaining} days remaining)`}
+                      >
+                        <span className="material-symbols-outlined text-[11px] text-red-600">
+                          battery_alert
+                        </span>
+                      </div>
+                    )}
+
                     {editMode && (
                       <div className="absolute top-[18px] left-1/2 -translate-x-1/2 text-[9px] font-mono bg-white/95 px-1.5 py-0.5 rounded shadow whitespace-nowrap border border-outline-variant/40 z-20">
                         {sensor.id}
@@ -670,10 +768,11 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
       {/* Hover card — fixed to viewport */}
       {hoveredSensor && !editMode && (
         <div
-          className="fixed z-[200] pointer-events-none"
+          ref={hoverCardRef}
+          className="fixed z-[200] pointer-events-none transition-all duration-75"
           style={{
-            left: Math.min(hoverPos.x + 16, window.innerWidth  - 320),
-            top:  Math.max(hoverPos.y - 20, 8),
+            left: `${leftPos}px`,
+            top: `${topPos}px`,
           }}
         >
           <SensorHoverCard
