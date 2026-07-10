@@ -134,9 +134,9 @@ const SensorHoverCard = ({ sensor, allSensors, groupName }) => {
           </div>
         </div>
         <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${isOffline ? 'bg-white/10 text-white/50'
-            : isExcursion ? 'bg-[#ba1a1a] text-white'
-              : sensor.isTrendBreachRisk ? 'bg-[#92400e] text-[#fde68a]'
-                : 'bg-white/10 text-white/70'
+          : isExcursion ? 'bg-[#ba1a1a] text-white'
+            : sensor.isTrendBreachRisk ? 'bg-[#92400e] text-[#fde68a]'
+              : 'bg-white/10 text-white/70'
           }`}>
           {isOffline ? 'Offline' : isExcursion ? `Active · ${sensor.lastSeen}` : sensor.isTrendBreachRisk ? 'Approaching limit' : 'Normal'}
         </span>
@@ -462,8 +462,8 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
         <button
           onClick={() => { setEditMode(v => !v); setPendingPlace(null); }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors ${editMode
-              ? 'bg-primary text-white'
-              : 'bg-white border border-outline-variant text-secondary hover:bg-surface-container-low'
+            ? 'bg-primary text-white'
+            : 'bg-white border border-outline-variant text-secondary hover:bg-surface-container-low'
             }`}
         >
           <span className="material-symbols-outlined text-[16px]">{editMode ? 'done' : 'edit'}</span>
@@ -509,8 +509,8 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
               key={s.id}
               onClick={() => setPendingPlace(pendingPlace === s.id ? null : s.id)}
               className={`px-2 py-0.5 rounded font-mono font-semibold border transition-colors ${pendingPlace === s.id
-                  ? 'bg-primary text-white border-primary'
-                  : 'bg-white border-outline-variant text-on-surface hover:bg-primary/5'
+                ? 'bg-primary text-white border-primary'
+                : 'bg-white border-outline-variant text-on-surface hover:bg-primary/5'
                 }`}
             >
               {s.id}

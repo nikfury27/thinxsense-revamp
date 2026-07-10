@@ -10,7 +10,7 @@ export const initialGroups = [
 
 export const initialUsers = [
 
-  
+
   { sno: 1, name: 'shwetha', role: 'ADMIN', email: 'shwetha@thinxsense.com', registered: '12-01-2026' }
 ];
 
@@ -146,7 +146,7 @@ export const initialSensors = [
   { id: 'H9B00008', name: 'H9B00008', temp: 29.2, hum: 37.0, batt: 94, lastSeen: '2 mins ago', status: 'warning', group: 'Cold Room 1', location: 'Rack A', history: generateHistory(29, 37), complianceScore: 92.1, dailyDrainRate: 1.1 },
   { id: 'H9B00009', name: 'H9B00009', temp: 28.8, hum: 38.2, batt: 90, lastSeen: '3 mins ago', status: 'warning', group: 'Cold Room 1', location: 'Rack B', history: generateHistory(28, 38), complianceScore: 93.0, dailyDrainRate: 1.3 },
   { id: 'H9B00012', name: 'H9B00012', temp: 24.1, hum: 42.5, batt: 88, lastSeen: '5 mins ago', status: 'online', group: 'Lab Storage', location: 'Table 2', history: generateHistory(24, 42), complianceScore: 95.0, dailyDrainRate: 1.5 },
-  
+
   // Cold Room 3 storage group
   { id: 'H9B00021', name: 'H9B00021', temp: 24.6, hum: 45.0, batt: 82, lastSeen: '3 mins ago', status: 'online', group: 'Cold Room 3', location: 'Shelf C', history: generateRisingHistory(21.2, 24.6, 45.0), complianceScore: 100.0, dailyDrainRate: 1.2 },
 
@@ -158,7 +158,7 @@ export const initialSensors = [
   { id: 'H9B00022', name: 'H9B00022', temp: 22.0, hum: 30.1, batt: 100, lastSeen: '1 hr ago', status: 'offline', group: 'Cold Room 3', location: 'Shelf B', history: generateHistory(22, 30), complianceScore: 92.0, dailyDrainRate: 1.2 },
   { id: 'H9B00067', name: 'H9B00067', temp: 26.5, hum: 40.2, batt: 76, lastSeen: 'Just now', status: 'warning', group: 'Loading Dock', location: 'Door', history: generateHistory(26, 40), complianceScore: 98.7, dailyDrainRate: 1.6 },
   { id: 'H9B00089', name: 'H9B00089', temp: 27.8, hum: 39.5, batt: 82, lastSeen: '10 mins ago', status: 'warning', group: 'Loading Dock', location: 'Freezer', history: generateHistory(27, 39), complianceScore: 99.2, dailyDrainRate: 1.4 },
-  
+
   // Active warnings in Cold Room 1 storage group
   { id: 'BRR00001', name: 'BRR00001', temp: 28.5, hum: 35.0, batt: 92, lastSeen: '12 mins ago', status: 'warning', group: 'Cold Room 1', location: 'Rack C', history: generateHistory(28, 35), complianceScore: 94.0, dailyDrainRate: 1.8 },
   { id: 'BRR00002', name: 'BRR00002', temp: 21.3, hum: 36.2, batt: 75, lastSeen: '40 mins ago', status: 'offline', group: 'Lab Storage', location: 'Table 3', history: [], complianceScore: 90.0, dailyDrainRate: 2.0 },
@@ -175,100 +175,100 @@ export const initialSensors = [
 
 export const initialAlerts = [
   // Severe deviation in Room B (Cold Room 2) - high ESI (Duration: 45m, Max Deviation: 6.2°C -> ESI: 279)
-  { 
-    id: 'ALT-9921', 
-    sensor: 'H9B00045', 
-    sensorName: 'H9B00045', 
-    time: '5/26/2026, 3:10:00 PM', 
-    param: 'Temperature', 
-    val: '31.2', 
-    threshold: '> 25°C', 
-    state: 'unacknowledged', 
-    arrow: 'upward', 
+  {
+    id: 'ALT-9921',
+    sensor: 'H9B00045',
+    sensorName: 'H9B00045',
+    time: '5/26/2026, 3:10:00 PM',
+    param: 'Temperature',
+    val: '31.2',
+    threshold: '> 25°C',
+    state: 'unacknowledged',
+    arrow: 'upward',
     humVal: '88',
-    deviation: 6.2, 
-    duration: 45, 
+    deviation: 6.2,
+    duration: 45,
     location: 'Cold Room 2, Rack 3',
     room: 'Room B (Severe Excursion)'
   },
-  
+
   // Room A (Cold Room 1) spikes - low ESI (Duration: 5m, Max Deviation: 0.5°C -> ESI: 2.5)
-  { 
-    id: 'ALT-9001', 
-    sensor: 'H9B00008', 
-    sensorName: 'H9B00008', 
-    time: '5/26/2026, 3:10:00 PM', 
-    param: 'Temperature', 
-    val: '25.5', 
-    threshold: '> 25°C', 
-    state: 'unacknowledged', 
-    arrow: 'upward', 
+  {
+    id: 'ALT-9001',
+    sensor: 'H9B00008',
+    sensorName: 'H9B00008',
+    time: '5/26/2026, 3:10:00 PM',
+    param: 'Temperature',
+    val: '25.5',
+    threshold: '> 25°C',
+    state: 'unacknowledged',
+    arrow: 'upward',
     humVal: '40',
-    deviation: 0.5, 
-    duration: 5, 
+    deviation: 0.5,
+    duration: 5,
     location: 'Cold Room 1, Rack A',
     room: 'Room A (Minor Spikes)'
   },
-  { 
-    id: 'ALT-9002', 
-    sensor: 'H9B00008', 
-    sensorName: 'H9B00008', 
-    time: '5/26/2026, 2:55:00 PM', 
-    param: 'Temperature', 
-    val: '25.4', 
-    threshold: '> 25°C', 
-    state: 'unacknowledged', 
-    arrow: 'upward', 
+  {
+    id: 'ALT-9002',
+    sensor: 'H9B00008',
+    sensorName: 'H9B00008',
+    time: '5/26/2026, 2:55:00 PM',
+    param: 'Temperature',
+    val: '25.4',
+    threshold: '> 25°C',
+    state: 'unacknowledged',
+    arrow: 'upward',
     humVal: '39',
-    deviation: 0.4, 
-    duration: 6, 
+    deviation: 0.4,
+    duration: 6,
     location: 'Cold Room 1, Rack A',
     room: 'Room A (Minor Spikes)'
   },
-  { 
-    id: 'ALT-9003', 
-    sensor: 'H9B00008', 
-    sensorName: 'H9B00008', 
-    time: '5/26/2026, 2:40:00 PM', 
-    param: 'Temperature', 
-    val: '25.6', 
-    threshold: '> 25°C', 
-    state: 'unacknowledged', 
-    arrow: 'upward', 
+  {
+    id: 'ALT-9003',
+    sensor: 'H9B00008',
+    sensorName: 'H9B00008',
+    time: '5/26/2026, 2:40:00 PM',
+    param: 'Temperature',
+    val: '25.6',
+    threshold: '> 25°C',
+    state: 'unacknowledged',
+    arrow: 'upward',
     humVal: '39',
-    deviation: 0.6, 
-    duration: 4, 
+    deviation: 0.6,
+    duration: 4,
     location: 'Cold Room 1, Rack A',
     room: 'Room A (Minor Spikes)'
   },
 
   // Other historical / mock alerts
-  { 
-    id: 'ALT-9920', 
-    sensor: 'H9B00045', 
-    sensorName: 'H9B00045', 
-    time: '5/26/2026, 3:05:00 PM', 
-    param: 'Humidity', 
-    val: '88.0', 
-    threshold: '> 80%', 
-    state: 'acknowledged', 
-    arrow: 'upward', 
+  {
+    id: 'ALT-9920',
+    sensor: 'H9B00045',
+    sensorName: 'H9B00045',
+    time: '5/26/2026, 3:05:00 PM',
+    param: 'Humidity',
+    val: '88.0',
+    threshold: '> 80%',
+    state: 'acknowledged',
+    arrow: 'upward',
     humVal: '88',
     deviation: 8.0,
     duration: 20,
     location: 'Cold Room 2, Rack 3',
     room: 'Room B (Severe Excursion)'
   },
-  { 
-    id: 'ALT-9850', 
-    sensor: 'H9B00022', 
-    sensorName: 'H9B00022', 
-    time: '5/26/2026, 2:40:00 PM', 
-    param: 'Connection', 
-    val: 'Timeout', 
-    threshold: 'N/A', 
-    state: 'unacknowledged', 
-    arrow: 'none', 
+  {
+    id: 'ALT-9850',
+    sensor: 'H9B00022',
+    sensorName: 'H9B00022',
+    time: '5/26/2026, 2:40:00 PM',
+    param: 'Connection',
+    val: 'Timeout',
+    threshold: 'N/A',
+    state: 'unacknowledged',
+    arrow: 'none',
     humVal: '-',
     deviation: 0,
     duration: 120,
@@ -390,8 +390,8 @@ export const initialSensorPositions = {
 
 export const initialGroupDimensions = {
   'Cold Room 1': { width: 120, length: 60, unit: 'm' },
-  'Cold Room 2': { width: 35,  length: 20, unit: 'm' },
-  'Cold Room 3': { width: 35,  length: 20, unit: 'm' },
+  'Cold Room 2': { width: 35, length: 20, unit: 'm' },
+  'Cold Room 3': { width: 35, length: 20, unit: 'm' },
   'Loading Dock': { width: 200, length: 80, unit: 'm' },
-  'Lab Storage': { width: 8,   length: 6,  unit: 'm' },
+  'Lab Storage': { width: 8, length: 6, unit: 'm' },
 };

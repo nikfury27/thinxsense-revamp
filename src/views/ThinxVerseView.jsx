@@ -71,7 +71,7 @@ const isOpenNow = (operatingHours, timezone) => {
   const nowMins = h * 60 + m;
   const [oh, om] = operatingHours.open.split(':').map(Number);
   const [ch, cm] = operatingHours.close.split(':').map(Number);
-  const openMins  = oh * 60 + om;
+  const openMins = oh * 60 + om;
   const closeMins = ch * 60 + cm;
   // Handle midnight-spanning shifts (e.g. 00:00–23:59 is always open)
   return closeMins >= openMins
@@ -165,11 +165,10 @@ const FacilityFloorPlan = ({ facility, allSensors, onBack, onNavigate }) => {
             <button
               key={g.name}
               onClick={() => setSelectedGroup(g)}
-              className={`px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
-                selectedGroup?.name === g.name
+              className={`px-3 py-1.5 rounded text-xs font-semibold transition-colors ${selectedGroup?.name === g.name
                   ? 'bg-primary text-white'
                   : 'bg-white border border-outline-variant text-secondary hover:bg-surface-container-low'
-              }`}
+                }`}
             >
               {g.name}
             </button>

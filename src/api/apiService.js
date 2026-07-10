@@ -59,18 +59,18 @@ const fetchWeather = async (lat, lng) => {
 const enrichSensor = (s) => {
   const group = groups.find(g => g.name === s.group);
   const facilityLocation = group ? group.location : 'Not Specified';
-  
+
   let slope = 0;
   let projectedHoursToBreach = null;
   let isTrendBreachRisk = false;
-  
+
   if (s.history && s.history.length >= 2) {
     const latest = s.history[s.history.length - 1];
     const earlier = s.history[s.history.length - 5] || s.history[0];
     const tempDiff = latest.temp - earlier.temp;
     const stepsDiff = s.history.length >= 5 ? 4 : (s.history.length - 1);
     slope = parseFloat((tempDiff / (stepsDiff || 1)).toFixed(2));
-    
+
     if (slope > 0 && s.temp > 22.5 && s.temp < 25.0) {
       const rawHours = (25.0 - s.temp) / slope;
       // Round to nearest 0.5 hours for realistic approximation
@@ -80,12 +80,12 @@ const enrichSensor = (s) => {
       }
     }
   }
-  
+
   const dailyDrain = s.dailyDrainRate || 1.5;
   // Round to nearest day for realistic battery swap forecast
   const batteryDaysRemaining = Math.round(s.batt / dailyDrain);
   const isBatterySwapRisk = batteryDaysRemaining <= 5;
-  
+
   return {
     ...s,
     facilityLocation,
@@ -103,7 +103,7 @@ const enrichGateway = (gw) => {
   // Round to nearest day for realistic battery swap forecast
   const batteryDaysRemaining = Math.round(batt / dailyDrain);
   const isBatterySwapRisk = batteryDaysRemaining <= 5;
-  
+
   return {
     ...gw,
     batteryDaysRemaining,
@@ -118,8 +118,8 @@ export const apiService = {
     let result = [...groups];
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      result = result.filter(g => 
-        g.name.toLowerCase().includes(q) || 
+      result = result.filter(g =>
+        g.name.toLowerCase().includes(q) ||
         g.desc.toLowerCase().includes(q) ||
         (g.location && g.location.toLowerCase().includes(q))
       );
@@ -150,7 +150,7 @@ export const apiService = {
     await delay(200);
     groups = groups.filter(g => g.name !== groupName);
     // Unassign sensors from this deleted group on the server
-    sensors = sensors.map(s => 
+    sensors = sensors.map(s =>
       s.group === groupName ? { ...s, group: 'unassigned' } : s
     );
     return true;
@@ -192,7 +192,7 @@ export const apiService = {
   async getSensors(filters = {}) {
     await delay(400);
     let result = [...sensors];
-    
+
     if (filters.group) {
       result = result.filter(s => s.group === filters.group);
     }
@@ -344,7 +344,7 @@ export const apiService = {
   async getLoginActivitySummary() {
     await delay(200);
     const from = new Date(loginSession.lastLogoutAt);
-    const to   = new Date(loginSession.currentLoginAt);
+    const to = new Date(loginSession.currentLoginAt);
     const allSensors = sensors.map(enrichSensor);
 
     const raisedAlerts = alerts.filter(a => {
@@ -393,25 +393,25 @@ export const apiService = {
   async getAlerts(options = {}) {
     await delay(300);
     let filtered = [...alerts];
-    
+
     if (options.searchQuery) {
       const q = options.searchQuery.toLowerCase();
-      filtered = filtered.filter(alert => 
-        alert.sensor.toLowerCase().includes(q) || 
+      filtered = filtered.filter(alert =>
+        alert.sensor.toLowerCase().includes(q) ||
         alert.id.toLowerCase().includes(q)
       );
     }
-    
+
     if (options.state) {
       filtered = filtered.filter(alert => alert.state === options.state);
     }
-    
+
     return filtered;
   },
 
   async acknowledgeAlert(alertId) {
     await delay(200);
-    alerts = alerts.map(alert => 
+    alerts = alerts.map(alert =>
       alert.id === alertId ? { ...alert, state: 'acknowledged' } : alert
     );
     return true;
