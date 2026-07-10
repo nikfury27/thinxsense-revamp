@@ -8,6 +8,11 @@ import {
   initialGateways,
   initialSensors,
   initialAlerts,
+  initialFacilities,
+  initialSensorPositions,
+  initialGroupDimensions,
+  initialShiftHandover,
+  initialLoginSession,
   generateHistory
 } from './mockData';
 
@@ -20,6 +25,36 @@ let users = [...initialUsers];
 let gateways = [...initialGateways];
 let sensors = [...initialSensors];
 let alerts = [...initialAlerts];
+let facilities = [...initialFacilities];
+let sensorPositions = { ...initialSensorPositions };
+let groupDimensions = { ...initialGroupDimensions };
+let shiftHandover = { ...initialShiftHandover };
+let loginSession = { ...initialLoginSession };
+
+// Weather cache: { `${lat},${lng}` -> { data, fetchedAt } }
+const weatherCache = {};
+const WEATHER_TTL_MS = 20 * 60 * 1000; // 20 minutes
+
+const fetchWeather = async (lat, lng) => {
+  const key = `${lat},${lng}`;
+  const cached = weatherCache[key];
+  if (cached && Date.now() - cached.fetchedAt < WEATHER_TTL_MS) {
+    return cached.data;
+  }
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode&timezone=auto`;
+    const res = await fetch(url);
+    const json = await res.json();
+    const data = {
+      temp: json.current?.temperature_2m ?? null,
+      code: json.current?.weathercode ?? 0
+    };
+    weatherCache[key] = { data, fetchedAt: Date.now() };
+    return data;
+  } catch {
+    return { temp: null, code: 0 };
+  }
+};
 
 const enrichSensor = (s) => {
   const group = groups.find(g => g.name === s.group);
@@ -223,6 +258,134 @@ export const apiService = {
     sensors = sensors.filter(s => s.id !== sensorId);
     alerts = alerts.filter(a => a.sensor !== sensorId);
     return true;
+  },
+
+  // --- FACILITIES API ---
+  async getFacilities() {
+    await delay(200);
+    return facilities.map(f => ({
+      ...f,
+      groups: groups.filter(g => f.groupIds.includes(g.name))
+    }));
+  },
+
+  async getFacilityWeather(lat, lng) {
+    return fetchWeather(lat, lng);
+  },
+
+  async getSensorPositions(groupName) {
+    await delay(100);
+    const groupSensors = sensors.filter(s => s.group === groupName);
+    return groupSensors.reduce((acc, s) => {
+      if (sensorPositions[s.id]) acc[s.id] = sensorPositions[s.id];
+      return acc;
+    }, {});
+  },
+
+  async saveSensorPosition(sensorId, pos) {
+    await delay(50);
+    sensorPositions[sensorId] = pos;
+    return true;
+  },
+
+  async getGroupDimensions(groupName) {
+    await delay(50);
+    return groupDimensions[groupName] || { width: 20, length: 15, unit: 'm' };
+  },
+
+  async saveGroupDimensions(groupName, dims) {
+    await delay(50);
+    groupDimensions[groupName] = dims;
+    return true;
+  },
+
+  // --- SHIFT HANDOVER API ---
+  async getShiftHandover() {
+    await delay(100);
+    return { ...shiftHandover };
+  },
+
+  async markHandoverViewed() {
+    await delay(50);
+    shiftHandover = { ...shiftHandover, viewed: true };
+    return true;
+  },
+
+  async submitHandoverNote(note, noteType) {
+    await delay(100);
+    shiftHandover = {
+      ...shiftHandover,
+      note,
+      noteType,          // 'note' | 'nothing'
+      noteTimestamp: new Date().toISOString(),
+      viewed: false,     // reset so next operator sees the badge
+      previousOperator: loginSession.username,
+    };
+    return { ...shiftHandover };
+  },
+
+  // --- LOGIN SESSION API ---
+  async getLoginSession() {
+    await delay(50);
+    return { ...loginSession };
+  },
+
+  async dismissLoginSummary() {
+    await delay(50);
+    loginSession = {
+      ...loginSession,
+      summaryDismissed: true,
+      lastLogoutAt: loginSession.currentLoginAt,
+    };
+    return true;
+  },
+
+  // Returns alerts raised between lastLogoutAt and currentLoginAt
+  async getLoginActivitySummary() {
+    await delay(200);
+    const from = new Date(loginSession.lastLogoutAt);
+    const to   = new Date(loginSession.currentLoginAt);
+    const allSensors = sensors.map(enrichSensor);
+
+    const raisedAlerts = alerts.filter(a => {
+      const t = new Date(a.time);
+      return t >= from && t <= to;
+    });
+
+    const resolvedAlerts = alerts.filter(a => {
+      const t = new Date(a.time);
+      return a.state === 'acknowledged' && t >= from && t <= to;
+    });
+
+    const offlineSensors = allSensors.filter(s => s.status === 'offline');
+    const activeExcursions = allSensors.filter(s => s.status === 'warning');
+    const batteryWarnings = allSensors.filter(s => s.isBatterySwapRisk);
+    const commFailures = allSensors.filter(s => s.status === 'offline' && s.lastSeen && s.lastSeen.includes('hr'));
+
+    const highestEsi = raisedAlerts.reduce((max, a) => {
+      const esi = a.param === 'Temperature' && a.deviation
+        ? parseFloat((a.deviation * (a.duration || 0)).toFixed(1))
+        : 0;
+      return esi > max ? esi : max;
+    }, 0);
+
+    return {
+      lastLogoutAt: loginSession.lastLogoutAt,
+      currentLoginAt: loginSession.currentLoginAt,
+      raisedAlerts,
+      resolvedAlerts,
+      offlineSensors,
+      activeExcursions,
+      batteryWarnings,
+      commFailures,
+      stats: {
+        newAlerts: raisedAlerts.length,
+        resolved: resolvedAlerts.length,
+        offlineSensors: offlineSensors.length,
+        activeExcursions: activeExcursions.length,
+        highestEsi,
+      },
+    };
   },
 
   // --- ALERTS API ---

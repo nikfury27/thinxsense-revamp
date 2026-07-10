@@ -199,7 +199,7 @@ const GroupsView = () => {
                 <span className="material-symbols-outlined text-[20px] font-bold">arrow_back</span>
               </button>
               <div>
-                <span className="text-xs text-secondary font-bold uppercase tracking-wider block">Group Profile Details</span>
+                <span className="text-xs text-secondary font-bold uppercase tracking-wider block">Storage Profile Details</span>
                 <h2 className="font-headline-lg text-lg text-on-surface font-bold">
                   {selectedGroup.name}
                 </h2>
@@ -212,14 +212,14 @@ const GroupsView = () => {
                 className="px-4 py-2 border border-error/20 bg-error/5 hover:bg-error/15 text-error rounded font-body-md text-xs font-semibold transition-colors flex items-center gap-1.5 active:scale-95 duration-100"
               >
                 <span className="material-symbols-outlined text-[16px]">delete</span>
-                <span>Delete Group</span>
+                <span>Delete Storage</span>
               </button>
               <button
                 onClick={() => setShowSensorModal(true)}
                 className="bg-primary hover:bg-primary/95 text-white px-4 py-2 rounded font-body-md text-xs font-semibold transition-colors flex items-center gap-1.5 active:scale-95 duration-100 shadow-sm"
               >
                 <span className="material-symbols-outlined text-[16px]">add_circle</span>
-                <span>Add Sensor to Group</span>
+                <span>Add Sensor to Storage</span>
               </button>
             </div>
           </div>
@@ -288,7 +288,7 @@ const GroupsView = () => {
           <div className="space-y-3">
             <h3 className="font-bold text-xs uppercase tracking-wider text-secondary flex items-center gap-1.5">
               <span className="material-symbols-outlined text-primary text-[18px]">sensors</span>
-              Sensors in this Group ({groupSensors.length})
+              Sensors in this Storage ({groupSensors.length})
             </h3>
 
             <div className="bg-white border border-outline-variant rounded-lg overflow-hidden flex flex-col shadow-sm">
@@ -319,7 +319,7 @@ const GroupsView = () => {
                     ) : groupSensors.length === 0 ? (
                       <tr>
                         <td colSpan={7} className="py-8 text-center text-on-surface-variant italic text-sm">
-                          No sensors assigned to this group yet. Click "+ Add Sensor to Group" to add one.
+                          No sensors assigned to this storage yet. Click "+ Add Sensor to Storage" to add one.
                         </td>
                       </tr>
                     ) : (
@@ -389,10 +389,10 @@ const GroupsView = () => {
           {/* Context Title & Statistics */}
           <div className="flex justify-between items-end">
             <div>
-              <h2 className="font-headline-lg text-headline-lg text-on-surface">Groups</h2>
+              <h2 className="font-headline-lg text-headline-lg text-on-surface">Storages</h2>
             </div>
             <div className="font-body-md text-sm text-secondary">
-              Groups - <span className="font-bold text-on-surface">Total: {filteredGroups.length}</span>
+              Storages - <span className="font-bold text-on-surface">Total: {filteredGroups.length}</span>
             </div>
           </div>
 
