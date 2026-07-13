@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { apiService } from '../../api/apiService';
+import {
+  calculateGridIDW,
+  classifySensor,
+  BREACH_THRESHOLD
+} from '../../utils/heatmapInterpolation';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const SENSOR_RANGE_M = 100; // real-world monitoring radius in metres
+const INFLUENCE_RADIUS_M = 100; // configurable radius of influence for IDW
 
 // ─── Sensor visual state ──────────────────────────────────────────────────────
-// Gradient color: red for breach, green for everything else (incl. trend-risk).
-// Dot color: yellow for trend-risk (approaching limit but still within range).
-// Offline sensors: grey dot, NO gradient painted.
-const BREACH_THRESHOLD = 25.0;
-
 const getSensorVisual = (sensor) => {
   if (sensor.status === 'offline') {
     return { dot: '#9ca3af', glow: null, label: 'Offline' };
@@ -24,59 +25,180 @@ const getSensorVisual = (sensor) => {
   return { dot: '#10b981', glow: [16, 185, 129], label: 'Normal' };
 };
 
-const classifySensor = (sensor, allSensors) => {
-  if (sensor.status === 'offline') return 'normal';
-  const neighbors = allSensors.filter(
-    s => s.group === sensor.group && s.id !== sensor.id && s.status !== 'offline'
-  );
-  if (neighbors.length === 0) return 'isolated';
-  const avg = neighbors.reduce((a, s) => a + s.temp, 0) / neighbors.length;
-  if (sensor.temp > BREACH_THRESHOLD && Math.abs(sensor.temp - avg) > 3.0) return 'isolated_anomaly';
-  if (sensor.temp > BREACH_THRESHOLD) return 'room_wide';
-  return 'normal';
-};
-
 // ─── Draw radar zones ─────────────────────────────────────────────────────────
-// radiusPx has no cap — a 100m sensor in an 8m room floods the entire canvas.
-// Offline sensors are skipped entirely (no gradient).
-// Paint order: normal first, then breach on top.
-const drawZones = (canvas, sensors, positions, roomW, roomH, hoveredId = null) => {
+const drawZones = (
+  canvas,
+  sensors,
+  positions,
+  roomW,
+  roomH,
+  hoveredId = null,
+  allSensors = [],
+  gridBufferRef = null,
+  prevSensorsRef = null,
+  prevPositionsRef = null,
+  offscreenCanvasRef = null
+) => {
   if (!canvas) return;
   const W = canvas.width;
   const H = canvas.height;
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, W, H);
 
   const scale = Math.min(W / roomW, H / roomH);
   const getRadius = () => SENSOR_RANGE_M * scale;
 
-  // Paint normal/trend-risk first, breach on top
-  const placed = sensors
-    .filter(s => positions[s.id] && s.status !== 'offline')
-    .sort((a, b) => (a.status === 'warning' ? 1 : 0) - (b.status === 'warning' ? 1 : 0));
+  // 1. Heatmap rendering using IDW
+  const GRID_CELLS_PER_METER = 2;
+  const cols = Math.round(roomW * GRID_CELLS_PER_METER);
+  const rows = Math.round(roomH * GRID_CELLS_PER_METER);
 
-  placed.forEach(sensor => {
-    const cx = positions[sensor.id].x * W;
-    const cy = positions[sensor.id].y * H;
-    const v = getSensorVisual(sensor);
-    const [r, g, b] = v.glow;
-    const radiusPx = getRadius();
+  let gridData = null;
+  let needsFullRecalculation = false;
 
-    // Soft, pleasing gradient — gentle centre bloom, fades cleanly
-    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
-    grad.addColorStop(0, `rgba(${r},${g},${b},0.38)`);
-    grad.addColorStop(0.30, `rgba(${r},${g},${b},0.22)`);
-    grad.addColorStop(0.60, `rgba(${r},${g},${b},0.10)`);
-    grad.addColorStop(0.85, `rgba(${r},${g},${b},0.04)`);
-    grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+  if (
+    !gridBufferRef ||
+    !gridBufferRef.current ||
+    gridBufferRef.current.cols !== cols ||
+    gridBufferRef.current.rows !== rows ||
+    gridBufferRef.current.roomW !== roomW ||
+    gridBufferRef.current.roomH !== roomH ||
+    !prevSensorsRef ||
+    !prevSensorsRef.current ||
+    prevSensorsRef.current.length !== sensors.length
+  ) {
+    needsFullRecalculation = true;
+  }
 
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
-    ctx.fill();
-  });
+  let changedSensorId = null;
+  let prevSensorPos = null;
 
-  // Hover boundary circle — only for the hovered sensor, skip offline
+  if (!needsFullRecalculation && prevSensorsRef && prevSensorsRef.current && prevPositionsRef && prevPositionsRef.current) {
+    const changes = [];
+    for (const curr of sensors) {
+      const prev = prevSensorsRef.current.find(s => s.id === curr.id);
+      const currPos = positions[curr.id];
+      const prevPos = prevPositionsRef.current[curr.id];
+
+      if (!prev) {
+        changes.push({ id: curr.id, type: 'added' });
+      } else {
+        const tempChanged = curr.temp !== prev.temp;
+        const statusChanged = curr.status !== prev.status;
+        const trendChanged = curr.isTrendBreachRisk !== prev.isTrendBreachRisk;
+
+        let posChanged = false;
+        if (!currPos && prevPos) posChanged = true;
+        else if (currPos && !prevPos) posChanged = true;
+        else if (currPos && prevPos && (currPos.x !== prevPos.x || currPos.y !== prevPos.y)) {
+          posChanged = true;
+        }
+
+        if (tempChanged || statusChanged || trendChanged || posChanged) {
+          changes.push({
+            id: curr.id,
+            prevPos: prevPos || currPos,
+            type: 'modified'
+          });
+        }
+      }
+    }
+
+    for (const prev of prevSensorsRef.current) {
+      if (!sensors.some(s => s.id === prev.id)) {
+        changes.push({ id: prev.id, type: 'deleted' });
+      }
+    }
+
+    if (changes.length === 0) {
+      gridData = gridBufferRef.current.data;
+    } else if (changes.length === 1 && changes[0].type === 'modified') {
+      changedSensorId = changes[0].id;
+      prevSensorPos = changes[0].prevPos;
+      gridData = gridBufferRef.current.data;
+    } else {
+      needsFullRecalculation = true;
+    }
+  }
+
+  if (needsFullRecalculation) {
+    gridData = calculateGridIDW({
+      roomW,
+      roomH,
+      cols,
+      rows,
+      sensors,
+      positions,
+      allSensors,
+      influenceRadius: INFLUENCE_RADIUS_M
+    });
+  } else if (changedSensorId && prevSensorPos) {
+    gridData = calculateGridIDW({
+      roomW,
+      roomH,
+      cols,
+      rows,
+      sensors,
+      positions,
+      allSensors,
+      influenceRadius: INFLUENCE_RADIUS_M,
+      prevGridData: gridData,
+      changedSensorId,
+      prevSensorPos
+    });
+  }
+
+  if (gridBufferRef) {
+    gridBufferRef.current = {
+      cols,
+      rows,
+      roomW,
+      roomH,
+      data: gridData
+    };
+  }
+  if (prevSensorsRef) {
+    prevSensorsRef.current = sensors.map(s => ({ ...s }));
+  }
+  if (prevPositionsRef) {
+    prevPositionsRef.current = { ...positions };
+  }
+
+  // Draw the interpolated grid onto the main canvas with smoothing
+  if (gridData && offscreenCanvasRef) {
+    if (!offscreenCanvasRef.current) {
+      offscreenCanvasRef.current = document.createElement('canvas');
+    }
+    const offscreen = offscreenCanvasRef.current;
+    if (offscreen.width !== cols || offscreen.height !== rows) {
+      offscreen.width = cols;
+      offscreen.height = rows;
+    }
+
+    const offCtx = offscreen.getContext('2d');
+    const imgData = offCtx.createImageData(cols, rows);
+
+    for (let idx = 0; idx < cols * rows; idx++) {
+      const cell = gridData[idx];
+      if (cell) {
+        const color = cell.color;
+        const pixelIdx = idx * 4;
+        imgData.data[pixelIdx] = color[0];
+        imgData.data[pixelIdx + 1] = color[1];
+        imgData.data[pixelIdx + 2] = color[2];
+        imgData.data[pixelIdx + 3] = Math.round(cell.opacity * 255);
+      }
+    }
+
+    offCtx.putImageData(imgData, 0, 0);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(offscreen, 0, 0, W, H);
+  } else {
+    ctx.clearRect(0, 0, W, H);
+  }
+
+  // 2. Hover boundary circle (retained unchanged for pixel-identical UI styling)
   if (hoveredId) {
     const hs = sensors.find(s => s.id === hoveredId);
     if (hs && positions[hs.id] && hs.status !== 'offline') {
@@ -84,14 +206,16 @@ const drawZones = (canvas, sensors, positions, roomW, roomH, hoveredId = null) =
       const cy = positions[hs.id].y * H;
       const radiusPx = getRadius();
       const v = getSensorVisual(hs);
-      const [r, g, b] = v.glow;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(${r},${g},${b},0.30)`;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([6, 4]);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      if (v.glow) {
+        const [r, g, b] = v.glow;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.30)`;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
     }
   }
 };
@@ -332,6 +456,11 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
   const [floorWidth, setFloorWidth] = useState(0);
   const [floorHeight, setFloorHeight] = useState(0);
 
+  const gridBufferRef = useRef(null);
+  const prevSensorsRef = useRef([]);
+  const prevPositionsRef = useRef({});
+  const offscreenCanvasRef = useRef(null);
+
   const groupSensors = useMemo(
     () => allSensors.filter(s => s.group === group.name),
     [allSensors, group.name]
@@ -358,8 +487,20 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
   }, []);
 
   useEffect(() => {
-    drawZones(zoneCanvasRef.current, groupSensors, positions, dims.width, dims.length, hoveredSensor?.id ?? null);
-  }, [groupSensors, positions, dims, canvasSize, hoveredSensor]);
+    drawZones(
+      zoneCanvasRef.current,
+      groupSensors,
+      positions,
+      dims.width,
+      dims.length,
+      hoveredSensor?.id ?? dragging ?? null,
+      allSensors,
+      gridBufferRef,
+      prevSensorsRef,
+      prevPositionsRef,
+      offscreenCanvasRef
+    );
+  }, [groupSensors, positions, dims, canvasSize, hoveredSensor, dragging, allSensors]);
 
   const xTicks = useMemo(() => getTicks(dims.width), [dims.width]);
   const yTicks = useMemo(() => getTicks(dims.length), [dims.length]);
@@ -399,10 +540,9 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
   }, [dragging, positions]);
 
   const handleSensorHover = useCallback((e, sensor) => {
-    if (editMode) return;
     setHoverPos({ x: e.clientX, y: e.clientY });
     setHoveredSensor(sensor);
-  }, [editMode]);
+  }, []);
 
   const handleSaveDims = async () => {
     const d = {
@@ -744,7 +884,7 @@ const FloorPlanView = ({ group, allSensors, onSensorClick }) => {
 
                     {editMode && (
                       <div className="absolute top-[18px] left-1/2 -translate-x-1/2 text-[9px] font-mono bg-white/95 px-1.5 py-0.5 rounded shadow whitespace-nowrap border border-outline-variant/40 z-20">
-                        {sensor.id}
+                        {sensor.id} ({(pos.x * dims.width).toFixed(1)}x{(pos.y * dims.length).toFixed(1)}{dims.unit})
                       </div>
                     )}
                   </div>
