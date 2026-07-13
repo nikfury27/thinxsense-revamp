@@ -24,9 +24,15 @@ The weight $w_i$ of a sensor at any grid point $P$ is determined by the distance
 $$w_i = \frac{C_{\text{sensor}, i} \cdot C_{\text{neighbour}, i} \cdot S_{\text{boundary}, i}}{d_i^2}$$
 
 ### Distance Calculation
-The distance $d_i$ is computed in physical room units (meters or feet) from the grid cell coordinates $(P_x, P_y)$ to the sensor coordinates $(S_{x, i}, S_{y, i})$:
+To ensure that the heatmap gradient renders as a perfect isotropic circle on screen (matching the circular range indicator) even when the room layout coordinates are stretched to fill the viewport, distance is calculated using directional canvas scale ratios:
 
-$$d_i = \sqrt{(P_x - S_{x, i})^2 + (P_y - S_{y, i})^2}$$
+$$Scale_X = \frac{Canvas_W}{Room_W}$$
+$$Scale_Y = \frac{Canvas_H}{Room_H}$$
+$$Scale_{\text{min}} = \min(Scale_X, Scale_Y)$$
+
+The adjusted isotropic distance $d_i$ is then:
+
+$$d_i = \sqrt{\left((P_x - S_{x, i}) \cdot \frac{Scale_X}{Scale_{\text{min}}}\right)^2 + \left((P_y - S_{y, i}) \cdot \frac{Scale_Y}{Scale_{\text{min}}}\right)^2}$$
 
 * If $d_i > \text{Influence Radius } (100\text{m})$, the weight is truncated: $w_i = 0$.
 * If $d_i < 0.1\text{m}$, the grid cell is treated as a direct sensor overlap, bypassing the sum to prevent division-by-zero or numerical instability: $V_P = V_i$.
