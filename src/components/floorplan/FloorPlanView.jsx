@@ -44,8 +44,8 @@ const drawZones = (
   const H = canvas.height;
   const ctx = canvas.getContext('2d');
 
-  const getRadiusX = () => SENSOR_RANGE_M * (W / roomW);
-  const getRadiusY = () => SENSOR_RANGE_M * (H / roomH);
+  const scale = Math.min(W / roomW, H / roomH);
+  const getRadius = () => SENSOR_RANGE_M * scale;
 
   // 1. Heatmap rendering using IDW
   const GRID_CELLS_PER_METER = 2;
@@ -124,6 +124,8 @@ const drawZones = (
     gridData = calculateGridIDW({
       roomW,
       roomH,
+      canvasW: W,
+      canvasH: H,
       cols,
       rows,
       sensors,
@@ -135,6 +137,8 @@ const drawZones = (
     gridData = calculateGridIDW({
       roomW,
       roomH,
+      canvasW: W,
+      canvasH: H,
       cols,
       rows,
       sensors,
@@ -198,19 +202,18 @@ const drawZones = (
     ctx.clearRect(0, 0, W, H);
   }
 
-  // 2. Hover boundary circle (drawn as an ellipse to match stretched coordinate proportions)
+  // 2. Hover boundary circle (drawn as a circle matching isotropic scale)
   if (hoveredId) {
     const hs = sensors.find(s => s.id === hoveredId);
     if (hs && positions[hs.id]) {
       const cx = positions[hs.id].x * W;
       const cy = positions[hs.id].y * H;
-      const rx = getRadiusX();
-      const ry = getRadiusY();
+      const radiusPx = getRadius();
       const v = getSensorVisual(hs);
       const glowColor = v.glow || [156, 163, 175];
       const [r, g, b] = glowColor;
       ctx.beginPath();
-      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
       ctx.strokeStyle = `rgba(${r},${g},${b},0.30)`;
       ctx.lineWidth = 1.5;
       ctx.setLineDash([6, 4]);

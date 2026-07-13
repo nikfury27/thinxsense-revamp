@@ -130,6 +130,8 @@ const getNearestSensorColor = (px, py, sensors, positions, roomW, roomH) => {
 export const calculateGridIDW = ({
   roomW,
   roomH,
+  canvasW,
+  canvasH,
   cols,
   rows,
   sensors,
@@ -147,6 +149,10 @@ export const calculateGridIDW = ({
   const greenColor = [16, 185, 129];
   const redColor = [239, 68, 68];
 
+  const scaleX = canvasW / roomW;
+  const scaleY = canvasH / roomH;
+  const scale = Math.min(scaleX, scaleY);
+
   // 1. Calculate bounding box indices to optimize incremental updates
   let rStart = 0;
   let rEnd = rows - 1;
@@ -159,10 +165,14 @@ export const calculateGridIDW = ({
     const sxOld = prevSensorPos.x * roomW;
     const syOld = prevSensorPos.y * roomH;
 
-    const xMin = Math.min(sxOld, sxNew !== null ? sxNew : sxOld) - influenceRadius;
-    const xMax = Math.max(sxOld, sxNew !== null ? sxNew : sxOld) + influenceRadius;
-    const yMin = Math.min(syOld, syNew !== null ? syNew : syOld) - influenceRadius;
-    const yMax = Math.max(syOld, syNew !== null ? syNew : syOld) + influenceRadius;
+    // Convert influenceRadius using the directional stretch scaling factors
+    const rx = influenceRadius * (scale / scaleX);
+    const ry = influenceRadius * (scale / scaleY);
+
+    const xMin = Math.min(sxOld, sxNew !== null ? sxNew : sxOld) - rx;
+    const xMax = Math.max(sxOld, sxNew !== null ? sxNew : sxOld) + rx;
+    const yMin = Math.min(syOld, syNew !== null ? syNew : syOld) - ry;
+    const yMax = Math.max(syOld, syNew !== null ? syNew : syOld) + ry;
 
     cStart = Math.max(0, Math.floor((xMin / roomW) * cols));
     cEnd = Math.min(cols - 1, Math.ceil((xMax / roomW) * cols));
@@ -188,7 +198,12 @@ export const calculateGridIDW = ({
         if (sxNew !== null && syNew !== null) {
           const dxNew = px - sxNew;
           const dyNew = py - syNew;
-          if (dxNew * dxNew + dyNew * dyNew <= influenceRadius * influenceRadius) {
+          // Scale differences to make gradient circle look isotropic on screen
+          const distNew = Math.sqrt(
+            Math.pow(dxNew * (scaleX / scale), 2) + 
+            Math.pow(dyNew * (scaleY / scale), 2)
+          );
+          if (distNew <= influenceRadius) {
             inNewRadius = true;
           }
         }
@@ -196,7 +211,11 @@ export const calculateGridIDW = ({
         let inOldRadius = false;
         const dxOld = px - sxOld;
         const dyOld = py - syOld;
-        if (dxOld * dxOld + dyOld * dyOld <= influenceRadius * influenceRadius) {
+        const distOld = Math.sqrt(
+          Math.pow(dxOld * (scaleX / scale), 2) + 
+          Math.pow(dyOld * (scaleY / scale), 2)
+        );
+        if (distOld <= influenceRadius) {
           inOldRadius = true;
         }
 
@@ -215,7 +234,10 @@ export const calculateGridIDW = ({
         const sy = positions[s.id].y * roomH;
         const dx = px - sx;
         const dy = py - sy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const dist = Math.sqrt(
+          Math.pow(dx * (scaleX / scale), 2) + 
+          Math.pow(dy * (scaleY / scale), 2)
+        );
 
         const isBreach = s.status === 'warning' || s.temp > BREACH_THRESHOLD;
         if (isBreach) {
@@ -233,7 +255,10 @@ export const calculateGridIDW = ({
         const sy = positions[s.id].y * roomH;
         const dx = px - sx;
         const dy = py - sy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const dist = Math.sqrt(
+          Math.pow(dx * (scaleX / scale), 2) + 
+          Math.pow(dy * (scaleY / scale), 2)
+        );
         
         const isBreach = s.status === 'warning' || s.temp > BREACH_THRESHOLD;
 
