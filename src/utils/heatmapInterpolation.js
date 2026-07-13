@@ -140,20 +140,44 @@ export const calculateGridIDW = ({
   changedSensorId = null,
   prevSensorPos = null
 }) => {
-  const data = new Array(cols * rows);
   const isIncremental = prevGridData && changedSensorId && prevSensorPos;
+  const data = isIncremental ? [...prevGridData] : new Array(cols * rows);
   const placedSensors = sensors.filter(s => positions[s.id] && s.status !== 'offline');
 
   const greenColor = [16, 185, 129];
   const redColor = [239, 68, 68];
 
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
+  // 1. Calculate bounding box indices to optimize incremental updates
+  let rStart = 0;
+  let rEnd = rows - 1;
+  let cStart = 0;
+  let cEnd = cols - 1;
+
+  if (isIncremental) {
+    const sxNew = positions[changedSensorId] ? positions[changedSensorId].x * roomW : null;
+    const syNew = positions[changedSensorId] ? positions[changedSensorId].y * roomH : null;
+    const sxOld = prevSensorPos.x * roomW;
+    const syOld = prevSensorPos.y * roomH;
+
+    const xMin = Math.min(sxOld, sxNew !== null ? sxNew : sxOld) - influenceRadius;
+    const xMax = Math.max(sxOld, sxNew !== null ? sxNew : sxOld) + influenceRadius;
+    const yMin = Math.min(syOld, syNew !== null ? syNew : syOld) - influenceRadius;
+    const yMax = Math.max(syOld, syNew !== null ? syNew : syOld) + influenceRadius;
+
+    cStart = Math.max(0, Math.floor((xMin / roomW) * cols));
+    cEnd = Math.min(cols - 1, Math.ceil((xMax / roomW) * cols));
+    rStart = Math.max(0, Math.floor((yMin / roomH) * rows));
+    rEnd = Math.min(rows - 1, Math.ceil((yMax / roomH) * rows));
+  }
+
+  // 2. Loop only over the affected bounding box subset
+  for (let r = rStart; r <= rEnd; r++) {
+    for (let c = cStart; c <= cEnd; c++) {
       const idx = r * cols + c;
       const px = ((c + 0.5) / cols) * roomW;
       const py = ((r + 0.5) / rows) * roomH;
 
-      // Incremental optimization: skip cells outside the influence of the modified sensor (old + new bounds)
+      // Check circular influence radius limits within the bounding box
       if (isIncremental) {
         const sxNew = positions[changedSensorId] ? positions[changedSensorId].x * roomW : null;
         const syNew = positions[changedSensorId] ? positions[changedSensorId].y * roomH : null;
@@ -177,7 +201,7 @@ export const calculateGridIDW = ({
         }
 
         if (!inNewRadius && !inOldRadius) {
-          data[idx] = prevGridData[idx];
+          // Unchanged (copied in array clone)
           continue;
         }
       }
