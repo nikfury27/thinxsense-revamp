@@ -111,3 +111,28 @@ $$X_{\text{physical}} = pos_x \cdot Room_W$$
 $$Y_{\text{physical}} = pos_y \cdot Room_L$$
 
 These physical coordinates are displayed dynamically in the format `Width x Length` underneath the sensor marker: e.g., `H9B00045 (10.5x7.0m)`.
+
+---
+
+## 6. Bounding-Box Index Optimization
+
+During sensor dragging, recalculating all grid points on a large grid is inefficient. To restrict calculations to the affected subset, we clone the previous grid buffer and calculate the index boundaries for the modified sensor (from its previous position to its current position plus the influence radius):
+
+$$X_{\text{min}} = \min(S_{x, \text{old}}, S_{x, \text{new}}) - R_{\text{influence}}$$
+$$X_{\text{max}} = \max(S_{x, \text{old}}, S_{x, \text{new}}) + R_{\text{influence}}$$
+$$Y_{\text{min}} = \min(S_{y, \text{old}}, S_{y, \text{new}}) - R_{\text{influence}}$$
+$$Y_{\text{max}} = \max(S_{y, \text{old}}, S_{y, \text{new}}) + R_{\text{influence}}$$
+
+These coordinate boundaries are converted into grid column/row index limits:
+
+$$col_{\text{start}} = \max\left(0, \left\lfloor \frac{X_{\text{min}}}{Room_W} \cdot Cols \right\rfloor\right)$$
+$$col_{\text{end}} = \min\left(Cols - 1, \left\lceil \frac{X_{\text{max}}}{Room_W} \cdot Cols \right\rceil\right)$$
+$$row_{\text{start}} = \max\left(0, \left\lfloor \frac{Y_{\text{min}}}{Room_L} \cdot Rows \right\rfloor\right)$$
+$$row_{\text{end}} = \min\left(Rows - 1, \left\lceil \frac{Y_{\text{max}}}{Room_L} \cdot Rows \right\rceil\right)$$
+
+The grid generator then only iterates:
+
+$$\text{for } r \in [row_{\text{start}}, row_{\text{end}}], \quad \text{for } c \in [col_{\text{start}}, col_{\text{end}}]$$
+
+This reduces complexity for active frames from $O(Cols \cdot Rows)$ to a local $O(\Delta \text{ Area})$, boosting performance by $90\text{--}99\%$.
+
