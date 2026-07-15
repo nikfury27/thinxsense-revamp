@@ -1,0 +1,1185 @@
+{
+  "web_sessions": [
+    {
+      "_id": "session_0ix8veqgd_mrlq7jkb",
+      "mode": "BOT",
+      "context": {},
+      "last_updated": "2026-07-15T07:01:48.331Z"
+    },
+    {
+      "_id": "session_5qxkkidqa_mrlqfodx",
+      "mode": "BOT",
+      "context": {},
+      "last_updated": "2026-07-15T07:42:06.211Z"
+    },
+    {
+      "_id": "session_zfllx9fgf_mrlua730",
+      "mode": "BOT",
+      "context": {},
+      "last_updated": "2026-07-15T08:53:34.514Z"
+    },
+    {
+      "_id": "session_z37ub16d4_mrludavl",
+      "mode": "BOT",
+      "context": {},
+      "last_updated": "2026-07-15T08:54:15.841Z"
+    },
+    {
+      "_id": "session_uwzjwpq2m_mrluehy9",
+      "mode": "BOT",
+      "context": {},
+      "last_updated": "2026-07-15T09:06:36.631Z"
+    },
+    {
+      "_id": "session_8gzbvykz7_mrluw4cs",
+      "mode": "BOT",
+      "context": {},
+      "last_updated": "2026-07-15T09:10:42.669Z"
+    }
+  ],
+  "active_escalations": [],
+  "escalation_queue": [],
+  "messages": [
+    {
+      "id": "6w7kymp",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "hello_init_silent_check_mode_123",
+      "timestamp": "2026-07-15T06:55:45.240Z"
+    },
+    {
+      "id": "b60paty",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "BOT",
+      "text": "Hello! I'm thinxsense Bot 🤖. How can I help you today?\n\nChoose one of these options by typing its number or description:\n1️⃣ *Check System Health* (Sensors & Gateways overview)\n2️⃣ *List Active Alerts* (Active cold room excursions sorted by severity)\n3️⃣ *Locate a Sensor* (Check specific sensor location/metrics)\n\nOr click the *Speak to a Human* button to escalate to WhatsApp Support.",
+      "timestamp": "2026-07-15T06:55:45.244Z"
+    },
+    {
+      "id": "swu01xm",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "hello_init_silent_check_mode_123",
+      "timestamp": "2026-07-15T06:55:45.269Z"
+    },
+    {
+      "id": "9929ozr",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "BOT",
+      "text": "Hello! I'm thinxsense Bot 🤖. How can I help you today?\n\nChoose one of these options by typing its number or description:\n1️⃣ *Check System Health* (Sensors & Gateways overview)\n2️⃣ *List Active Alerts* (Active cold room excursions sorted by severity)\n3️⃣ *Locate a Sensor* (Check specific sensor location/metrics)\n\nOr click the *Speak to a Human* button to escalate to WhatsApp Support.",
+      "timestamp": "2026-07-15T06:55:45.273Z"
+    },
+    {
+      "id": "9ao58eo",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "2",
+      "timestamp": "2026-07-15T06:56:04.867Z"
+    },
+    {
+      "id": "9oxpi2u",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "BOT",
+      "text": "🚨 *Active Environmental Excursions*:\n\n• *ID: ALT-9921* - Room B (Severe Excursion)\n  📍 Location: Cold Room 2, Rack 3\n  🌡️ Value: 31.2°C (Threshold > 25°C)\n  ⚡ Severity ESI: *279.0*\n\n• *ID: ALT-9001* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.5°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.5*\n\n• *ID: ALT-9002* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.4°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9003* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.6°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9850* - Cold Room 3\n  📍 Location: Cold Room 3, Shelf B\n  🌡️ Value: Timeout°C (Threshold N/A)\n  ⚡ Severity ESI: *N/A*\n\nPlease acknowledge these deviations on the Alerts panel.",
+      "timestamp": "2026-07-15T06:56:04.869Z"
+    },
+    {
+      "id": "zlocrub",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T06:56:13.306Z"
+    },
+    {
+      "id": "gpw9ylv",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T06:56:13.311Z"
+    },
+    {
+      "id": "89n80yz",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "hey",
+      "timestamp": "2026-07-15T06:56:19.226Z"
+    },
+    {
+      "id": "12aq174",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:24.538Z"
+    },
+    {
+      "id": "6o54i8r",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:25.567Z"
+    },
+    {
+      "id": "m9q4lzh",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:25.622Z"
+    },
+    {
+      "id": "7y76qmr",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:25.677Z"
+    },
+    {
+      "id": "t17rhs2",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:26.246Z"
+    },
+    {
+      "id": "ybvaa0m",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:26.415Z"
+    },
+    {
+      "id": "w2qqyrh",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:26.591Z"
+    },
+    {
+      "id": "obgs8n0",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:26.760Z"
+    },
+    {
+      "id": "zhlqmze",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:58.892Z"
+    },
+    {
+      "id": "dc37qww",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:56:59.505Z"
+    },
+    {
+      "id": "iys3nr4",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "hello_init_silent_check_mode_123",
+      "timestamp": "2026-07-15T06:59:08.905Z"
+    },
+    {
+      "id": "9rwpkkz",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "hello_init_silent_check_mode_123",
+      "timestamp": "2026-07-15T06:59:08.919Z"
+    },
+    {
+      "id": "jcgoeev",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "1",
+      "timestamp": "2026-07-15T06:59:19.184Z"
+    },
+    {
+      "id": "us7rzau",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:21.944Z"
+    },
+    {
+      "id": "2o4q9m1",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:22.006Z"
+    },
+    {
+      "id": "iz9oprf",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:22.509Z"
+    },
+    {
+      "id": "n7pvr5f",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:22.680Z"
+    },
+    {
+      "id": "fmx2x7l",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:22.854Z"
+    },
+    {
+      "id": "x4u9s50",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:22.981Z"
+    },
+    {
+      "id": "4tiybh6",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:23.030Z"
+    },
+    {
+      "id": "sbnqlqp",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:59.621Z"
+    },
+    {
+      "id": "9i5zbxt",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T06:59:59.736Z"
+    },
+    {
+      "id": "fcb4qfc",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:01.620Z"
+    },
+    {
+      "id": "721kjav",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:02.081Z"
+    },
+    {
+      "id": "s7f79sg",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:02.145Z"
+    },
+    {
+      "id": "tc8qztg",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:02.331Z"
+    },
+    {
+      "id": "ur360ua",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:02.500Z"
+    },
+    {
+      "id": "bwoggil",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:02.662Z"
+    },
+    {
+      "id": "305oyye",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:02.773Z"
+    },
+    {
+      "id": "jx1863d",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:00:02.819Z"
+    },
+    {
+      "id": "xyakyio",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:01:48.318Z"
+    },
+    {
+      "id": "gyv4025",
+      "session_id": "session_0ix8veqgd_mrlq7jkb",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:01:48.332Z"
+    },
+    {
+      "id": "j8jyq6e",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "1",
+      "timestamp": "2026-07-15T07:02:10.417Z"
+    },
+    {
+      "id": "nyt9ajo",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "📊 *System Health Summary*:\n\n🌐 *Gateways*: 2 of 3 online.\n🌡️ *Sensors*:\n  • Online: 4\n  • Warning: 6\n  • Offline: 5\n\nAll BLE Beacons are sending metrics at standard intervals. Select another option or type \"Speak to a Human\" if you need live assistance.",
+      "timestamp": "2026-07-15T07:02:10.421Z"
+    },
+    {
+      "id": "ybu9aq4",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "1",
+      "timestamp": "2026-07-15T07:02:10.508Z"
+    },
+    {
+      "id": "qnbmy4r",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "📊 *System Health Summary*:\n\n🌐 *Gateways*: 2 of 3 online.\n🌡️ *Sensors*:\n  • Online: 4\n  • Warning: 6\n  • Offline: 5\n\nAll BLE Beacons are sending metrics at standard intervals. Select another option or type \"Speak to a Human\" if you need live assistance.",
+      "timestamp": "2026-07-15T07:02:10.511Z"
+    },
+    {
+      "id": "z9xbg4z",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "2",
+      "timestamp": "2026-07-15T07:02:22.283Z"
+    },
+    {
+      "id": "osr8hd8",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "🚨 *Active Environmental Excursions*:\n\n• *ID: ALT-9921* - Room B (Severe Excursion)\n  📍 Location: Cold Room 2, Rack 3\n  🌡️ Value: 31.2°C (Threshold > 25°C)\n  ⚡ Severity ESI: *279.0*\n\n• *ID: ALT-9001* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.5°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.5*\n\n• *ID: ALT-9002* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.4°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9003* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.6°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9850* - Cold Room 3\n  📍 Location: Cold Room 3, Shelf B\n  🌡️ Value: Timeout°C (Threshold N/A)\n  ⚡ Severity ESI: *N/A*\n\nPlease acknowledge these deviations on the Alerts panel.",
+      "timestamp": "2026-07-15T07:02:22.285Z"
+    },
+    {
+      "id": "l76xr4s",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T07:02:22.428Z"
+    },
+    {
+      "id": "no5zhvm",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T07:02:22.433Z"
+    },
+    {
+      "id": "g5n4xcq",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:27:46.530Z"
+    },
+    {
+      "id": "xushyil",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:27:46.538Z"
+    },
+    {
+      "id": "t7i3bo4",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T07:27:48.981Z"
+    },
+    {
+      "id": "53jv67t",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T07:27:49.092Z"
+    },
+    {
+      "id": "p10zomm",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "All support agents are currently busy. You are number 1 in the queue. Please hold.",
+      "timestamp": "2026-07-15T07:27:49.097Z"
+    },
+    {
+      "id": "mmp0884",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T07:27:49.467Z"
+    },
+    {
+      "id": "f9b4u8h",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "hi",
+      "timestamp": "2026-07-15T07:27:54.511Z"
+    },
+    {
+      "id": "4pwpras",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:29:10.434Z"
+    },
+    {
+      "id": "tgd0gxv",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:29:10.442Z"
+    },
+    {
+      "id": "457s7d5",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent... You are now connected!",
+      "timestamp": "2026-07-15T07:29:11.935Z"
+    },
+    {
+      "id": "m4sqqow",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "1",
+      "timestamp": "2026-07-15T07:29:12.194Z"
+    },
+    {
+      "id": "2byl7sv",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:29:15.792Z"
+    },
+    {
+      "id": "om203q1",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:29:15.802Z"
+    },
+    {
+      "id": "ifcoe7v",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "3",
+      "timestamp": "2026-07-15T07:29:17.108Z"
+    },
+    {
+      "id": "wo7fohi",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "📍 *Locate Sensor*:\nTo locate a sensor, please specify its ID. For example: `locate H9B00045` or `find BRR00001`.",
+      "timestamp": "2026-07-15T07:29:17.110Z"
+    },
+    {
+      "id": "jjcsjcr",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "BRR00001",
+      "timestamp": "2026-07-15T07:29:26.061Z"
+    },
+    {
+      "id": "mzczksk",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Hello! I'm thinxsense Bot 🤖. How can I help you today?\n\nChoose one of these options by typing its number or description:\n1️⃣ *Check System Health* (Sensors & Gateways overview)\n2️⃣ *List Active Alerts* (Active cold room excursions sorted by severity)\n3️⃣ *Locate a Sensor* (Check specific sensor location/metrics)\n\nOr click the *Speak to a Human* button to escalate to WhatsApp Support.",
+      "timestamp": "2026-07-15T07:29:26.064Z"
+    },
+    {
+      "id": "a6zcc8s",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T07:29:30.078Z"
+    },
+    {
+      "id": "99ld361",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T07:29:30.517Z"
+    },
+    {
+      "id": "q53t97n",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:30:21.725Z"
+    },
+    {
+      "id": "o6wddwr",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:30:21.735Z"
+    },
+    {
+      "id": "zyay19t",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T07:30:22.815Z"
+    },
+    {
+      "id": "1vxmcsl",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T07:30:24.246Z"
+    },
+    {
+      "id": "gp1uo0b",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "hi",
+      "timestamp": "2026-07-15T07:30:31.743Z"
+    },
+    {
+      "id": "svqqyfp",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Hey",
+      "timestamp": "2026-07-15T07:30:58.882Z"
+    },
+    {
+      "id": "lua06fy",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Hey",
+      "timestamp": "2026-07-15T07:30:58.937Z"
+    },
+    {
+      "id": "87dh3iz",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "i have an issue with my gateway",
+      "timestamp": "2026-07-15T07:31:11.864Z"
+    },
+    {
+      "id": "vwootqg",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Provide more details?",
+      "timestamp": "2026-07-15T07:31:21.264Z"
+    },
+    {
+      "id": "l74duxv",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Provide more details?",
+      "timestamp": "2026-07-15T07:31:21.391Z"
+    },
+    {
+      "id": "au8pcdx",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Hi",
+      "timestamp": "2026-07-15T07:31:27.620Z"
+    },
+    {
+      "id": "yjmkamg",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:31:47.143Z"
+    },
+    {
+      "id": "acu8ing",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:31:47.154Z"
+    },
+    {
+      "id": "rbdzw1j",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T07:34:20.210Z"
+    },
+    {
+      "id": "noidy6o",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T07:34:21.035Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMDgyNjI0NTY1RTgzRURDN0IyQQA=",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Hello",
+      "timestamp": "2026-07-15T07:34:37.220Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMDhBQkNCMUE0OTE2Q0RGRTlGMAA=",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "How can i help you?",
+      "timestamp": "2026-07-15T07:34:48.262Z"
+    },
+    {
+      "id": "zxbq7in",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "I have issues with my gateway, i need help with it",
+      "timestamp": "2026-07-15T07:35:05.788Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMERCNDlDRDFCMkY5RUYzOTY3RAA=",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Help",
+      "timestamp": "2026-07-15T07:35:36.388Z"
+    },
+    {
+      "id": "s9ymw7x",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:35:42.576Z"
+    },
+    {
+      "id": "5iqzjhh",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:35:42.583Z"
+    },
+    {
+      "id": "3nzulf8",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "1",
+      "timestamp": "2026-07-15T07:36:24.817Z"
+    },
+    {
+      "id": "qtcn4lw",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "📊 *System Health Summary*:\n\n🌐 *Gateways*: 2 of 3 online.\n🌡️ *Sensors*:\n  • Online: 4\n  • Warning: 6\n  • Offline: 5\n\nAll BLE Beacons are sending metrics at standard intervals. Select another option or type \"Speak to a Human\" if you need live assistance.",
+      "timestamp": "2026-07-15T07:36:24.820Z"
+    },
+    {
+      "id": "rvidmoa",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "1",
+      "timestamp": "2026-07-15T07:36:24.945Z"
+    },
+    {
+      "id": "weg4jw8",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "📊 *System Health Summary*:\n\n🌐 *Gateways*: 2 of 3 online.\n🌡️ *Sensors*:\n  • Online: 4\n  • Warning: 6\n  • Offline: 5\n\nAll BLE Beacons are sending metrics at standard intervals. Select another option or type \"Speak to a Human\" if you need live assistance.",
+      "timestamp": "2026-07-15T07:36:24.948Z"
+    },
+    {
+      "id": "50tcapg",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "2",
+      "timestamp": "2026-07-15T07:36:30.736Z"
+    },
+    {
+      "id": "j4cbi3p",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "🚨 *Active Environmental Excursions*:\n\n• *ID: ALT-9921* - Room B (Severe Excursion)\n  📍 Location: Cold Room 2, Rack 3\n  🌡️ Value: 31.2°C (Threshold > 25°C)\n  ⚡ Severity ESI: *279.0*\n\n• *ID: ALT-9001* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.5°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.5*\n\n• *ID: ALT-9002* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.4°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9003* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.6°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9850* - Cold Room 3\n  📍 Location: Cold Room 3, Shelf B\n  🌡️ Value: Timeout°C (Threshold N/A)\n  ⚡ Severity ESI: *N/A*\n\nPlease acknowledge these deviations on the Alerts panel.",
+      "timestamp": "2026-07-15T07:36:30.738Z"
+    },
+    {
+      "id": "84aga5t",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "2",
+      "timestamp": "2026-07-15T07:36:30.831Z"
+    },
+    {
+      "id": "m5dvxqc",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "🚨 *Active Environmental Excursions*:\n\n• *ID: ALT-9921* - Room B (Severe Excursion)\n  📍 Location: Cold Room 2, Rack 3\n  🌡️ Value: 31.2°C (Threshold > 25°C)\n  ⚡ Severity ESI: *279.0*\n\n• *ID: ALT-9001* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.5°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.5*\n\n• *ID: ALT-9002* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.4°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9003* - Room A (Minor Spikes)\n  📍 Location: Cold Room 1, Rack A\n  🌡️ Value: 25.6°C (Threshold > 25°C)\n  ⚡ Severity ESI: *2.4*\n\n• *ID: ALT-9850* - Cold Room 3\n  📍 Location: Cold Room 3, Shelf B\n  🌡️ Value: Timeout°C (Threshold N/A)\n  ⚡ Severity ESI: *N/A*\n\nPlease acknowledge these deviations on the Alerts panel.",
+      "timestamp": "2026-07-15T07:36:30.833Z"
+    },
+    {
+      "id": "m14v510",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T07:40:56.301Z"
+    },
+    {
+      "id": "f220vfs",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T07:40:57.167Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMEZFN0QyNzc3MzJEMTkzODJDMwA=",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "Hey",
+      "timestamp": "2026-07-15T07:41:18.504Z"
+    },
+    {
+      "id": "ukvz0ei",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "i have issue with gateway",
+      "timestamp": "2026-07-15T07:41:28.930Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMEMyMUQ1OEQwMjQ2RjAxMjNFMgA=",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "AGENT",
+      "text": "let us know mroe",
+      "timestamp": "2026-07-15T07:42:02.320Z"
+    },
+    {
+      "id": "od6zdbi",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T07:42:06.205Z"
+    },
+    {
+      "id": "gpr0yvi",
+      "session_id": "session_5qxkkidqa_mrlqfodx",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T07:42:06.213Z"
+    },
+    {
+      "id": "8tthviz",
+      "session_id": "session_zfllx9fgf_mrlua730",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T08:50:00.574Z"
+    },
+    {
+      "id": "or8jr6r",
+      "session_id": "session_zfllx9fgf_mrlua730",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T08:50:01.323Z"
+    },
+    {
+      "id": "ylyq5ou",
+      "session_id": "session_zfllx9fgf_mrlua730",
+      "sender": "BOT",
+      "text": "All support agents are currently busy. You are number 1 in the queue. Please hold.",
+      "timestamp": "2026-07-15T08:50:01.329Z"
+    },
+    {
+      "id": "zjaa01m",
+      "session_id": "session_zfllx9fgf_mrlua730",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T08:50:02.444Z"
+    },
+    {
+      "id": "fnpzw23",
+      "session_id": "session_z37ub16d4_mrludavl",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T08:52:55.555Z"
+    },
+    {
+      "id": "mxrmdrb",
+      "session_id": "session_z37ub16d4_mrludavl",
+      "sender": "BOT",
+      "text": "All support agents are currently busy. You are number 2 in the queue. Please hold.",
+      "timestamp": "2026-07-15T08:52:55.560Z"
+    },
+    {
+      "id": "gb6w5wu",
+      "session_id": "session_z37ub16d4_mrludavl",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T08:53:00.056Z"
+    },
+    {
+      "id": "wrwggpk",
+      "session_id": "session_z37ub16d4_mrludavl",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T08:53:00.062Z"
+    },
+    {
+      "id": "3zullm0",
+      "session_id": "session_zfllx9fgf_mrlua730",
+      "sender": "BOT",
+      "text": "The support agent has closed this session. Conversational bot is back online.",
+      "timestamp": "2026-07-15T08:53:25.007Z"
+    },
+    {
+      "id": "avl2m4u",
+      "session_id": "session_zfllx9fgf_mrlua730",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent... You are now connected!",
+      "timestamp": "2026-07-15T08:53:26.995Z"
+    },
+    {
+      "id": "os3mii4",
+      "session_id": "session_zfllx9fgf_mrlua730",
+      "sender": "BOT",
+      "text": "The support agent has closed this session. Conversational bot is back online.",
+      "timestamp": "2026-07-15T08:53:34.516Z"
+    },
+    {
+      "id": "h8w9d2w",
+      "session_id": "session_z37ub16d4_mrludavl",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent... You are now connected!",
+      "timestamp": "2026-07-15T08:53:36.230Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMEMzNDU0NzQyN0VFNUYwRkI0RQA=",
+      "session_id": "session_z37ub16d4_mrludavl",
+      "sender": "AGENT",
+      "text": "hi",
+      "timestamp": "2026-07-15T08:54:04.031Z"
+    },
+    {
+      "id": "vfnp64i",
+      "session_id": "session_z37ub16d4_mrludavl",
+      "sender": "BOT",
+      "text": "The support agent has closed this session. Conversational bot is back online.",
+      "timestamp": "2026-07-15T08:54:15.843Z"
+    },
+    {
+      "id": "x3cjb0w",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T08:55:05.611Z"
+    },
+    {
+      "id": "q0vo3z7",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T08:55:06.652Z"
+    },
+    {
+      "id": "hiqoibh",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "System: You are now connected to a thinxsense Customer Support Executive.",
+      "timestamp": "2026-07-15T08:55:06.665Z"
+    },
+    {
+      "id": "et91sme",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "AGENT",
+      "text": "Hello, I'm Nikhil. How can I help you today?",
+      "timestamp": "2026-07-15T08:55:06.668Z"
+    },
+    {
+      "id": "phepraq",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T08:55:39.320Z"
+    },
+    {
+      "id": "evfq343",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T08:55:39.330Z"
+    },
+    {
+      "id": "3mei6ix",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "System health",
+      "timestamp": "2026-07-15T08:58:05.380Z"
+    },
+    {
+      "id": "h85ox9u",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "📊 *System Health Summary*:\n\n🌐 *Gateways*: 2 of 3 online.\n🌡️ *Sensors*:\n  • Online: 4\n  • Warning: 6\n  • Offline: 5\n\nAll BLE Beacons are sending metrics at standard intervals. Select another option or type \"Speak to a Human\" if you need live assistance.",
+      "timestamp": "2026-07-15T08:58:05.386Z"
+    },
+    {
+      "id": "b50d6sj",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "3",
+      "timestamp": "2026-07-15T08:58:12.925Z"
+    },
+    {
+      "id": "8sqhy66",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "📍 *Locate Sensor*:\nTo locate a sensor, please specify its ID. For example: `locate H9B00045` or `find BRR00001`.",
+      "timestamp": "2026-07-15T08:58:12.930Z"
+    },
+    {
+      "id": "r69rdok",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "3",
+      "timestamp": "2026-07-15T08:58:12.986Z"
+    },
+    {
+      "id": "t32nksz",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "📍 *Locate Sensor*:\nTo locate a sensor, please specify its ID. For example: `locate H9B00045` or `find BRR00001`.",
+      "timestamp": "2026-07-15T08:58:12.988Z"
+    },
+    {
+      "id": "gjscp57",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "tf6",
+      "timestamp": "2026-07-15T08:58:16.903Z"
+    },
+    {
+      "id": "1ev6muo",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "Hello! I'm thinxsense Bot 🤖. How can I help you today?\n\nChoose one of these options by typing its number or description:\n1️⃣ *Check System Health* (Sensors & Gateways overview)\n2️⃣ *List Active Alerts* (Active cold room excursions sorted by severity)\n3️⃣ *Locate a Sensor* (Check specific sensor location/metrics)\n\nOr click the *Speak to a Human* button to escalate to WhatsApp Support.",
+      "timestamp": "2026-07-15T08:58:16.907Z"
+    },
+    {
+      "id": "sz6ifhv",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T08:59:07.507Z"
+    },
+    {
+      "id": "ypwae7t",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T08:59:07.642Z"
+    },
+    {
+      "id": "u6zstvg",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T08:59:08.244Z"
+    },
+    {
+      "id": "ss736d5",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "Please describe your concerns or queries here first, and our support executive will reach out to you on WhatsApp as soon as possible.",
+      "timestamp": "2026-07-15T08:59:08.272Z"
+    },
+    {
+      "id": "gsicbuk",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T08:59:08.855Z"
+    },
+    {
+      "id": "j4tkp2k",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "Please describe your concerns or queries here first, and our support executive will reach out to you on WhatsApp as soon as possible.",
+      "timestamp": "2026-07-15T08:59:08.874Z"
+    },
+    {
+      "id": "ryrq643",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "USER",
+      "text": "I'm having troubles with my gateway",
+      "timestamp": "2026-07-15T08:59:25.629Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMDRFM0ZCQTk1MEVDMTdBMUM3OAA=",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "AGENT",
+      "text": "Please elaborate",
+      "timestamp": "2026-07-15T08:59:44.721Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhggQUMxMjIwNEI4RjA1OUZCRUQwRjMzOTk2RUM4Q0REM0MA",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "AGENT",
+      "text": "Hey",
+      "timestamp": "2026-07-15T09:04:41.401Z"
+    },
+    {
+      "id": "cmekxja",
+      "session_id": "session_uwzjwpq2m_mrluehy9",
+      "sender": "BOT",
+      "text": "The support agent has closed this session. Conversational bot is back online.",
+      "timestamp": "2026-07-15T09:06:36.642Z"
+    },
+    {
+      "id": "ygwo65u",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T09:06:53.548Z"
+    },
+    {
+      "id": "f2f4wq5",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T09:06:53.830Z"
+    },
+    {
+      "id": "fd1ymeg",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "Please describe your concerns or queries here first, and our support executive will reach out to you on WhatsApp as soon as possible.",
+      "timestamp": "2026-07-15T09:06:53.863Z"
+    },
+    {
+      "id": "tmbavh0",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "Hey",
+      "timestamp": "2026-07-15T09:06:57.236Z"
+    },
+    {
+      "id": "fnuvjnw",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T09:07:52.033Z"
+    },
+    {
+      "id": "9l0yr6r",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T09:07:52.068Z"
+    },
+    {
+      "id": "vem9my0",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T09:07:53.441Z"
+    },
+    {
+      "id": "05qxh08",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T09:07:53.807Z"
+    },
+    {
+      "id": "lffuxva",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "Please describe your concerns or queries here first, and our support executive will reach out to you on WhatsApp as soon as possible.",
+      "timestamp": "2026-07-15T09:07:53.898Z"
+    },
+    {
+      "id": "x7a1a4h",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "Hi",
+      "timestamp": "2026-07-15T09:07:56.528Z"
+    },
+    {
+      "id": "4muc5pn",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T09:10:15.669Z"
+    },
+    {
+      "id": "skh0o97",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T09:10:15.706Z"
+    },
+    {
+      "id": "4efwhv8",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "1",
+      "timestamp": "2026-07-15T09:10:17.882Z"
+    },
+    {
+      "id": "cce1s3s",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "📊 *System Health Summary*:\n\n🌐 *Gateways*: 2 of 3 online.\n🌡️ *Sensors*:\n  • Online: 4\n  • Warning: 6\n  • Offline: 5\n\nAll BLE Beacons are sending metrics at standard intervals. Select another option or type \"Speak to a Human\" if you need live assistance.",
+      "timestamp": "2026-07-15T09:10:17.894Z"
+    },
+    {
+      "id": "hru2h14",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "[Request Live Support]",
+      "timestamp": "2026-07-15T09:10:20.048Z"
+    },
+    {
+      "id": "96n2vz1",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "Connecting you to a human agent on WhatsApp... Please hold.",
+      "timestamp": "2026-07-15T09:10:20.849Z"
+    },
+    {
+      "id": "vvqqd2n",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "Please describe your concerns or queries here first, and our support executive will reach out to you on WhatsApp as soon as possible.",
+      "timestamp": "2026-07-15T09:10:20.899Z"
+    },
+    {
+      "id": "745okkw",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "Hey",
+      "timestamp": "2026-07-15T09:10:25.568Z"
+    },
+    {
+      "id": "wamid.HBgMOTE5NzM5NDk3NTE4FQIAEhgWM0VCMDdCRERBOEQzRTVEMEQxQ0MyMQA=",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "AGENT",
+      "text": "Hello",
+      "timestamp": "2026-07-15T09:10:36.802Z"
+    },
+    {
+      "id": "m5q43ly",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "USER",
+      "text": "/end",
+      "timestamp": "2026-07-15T09:10:42.641Z"
+    },
+    {
+      "id": "d7bgry8",
+      "session_id": "session_8gzbvykz7_mrluw4cs",
+      "sender": "BOT",
+      "text": "The support session has been closed. Conversational bot is back online.",
+      "timestamp": "2026-07-15T09:10:42.680Z"
+    }
+  ]
+}

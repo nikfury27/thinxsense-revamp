@@ -10,6 +10,8 @@ import GatewaysView from './views/GatewaysView';
 import ThinxVerseView from './views/ThinxVerseView';
 import LoginScreen from './components/LoginScreen';
 import LoginSummaryModal from './components/LoginSummaryModal';
+import ChatbotWidget from './components/ChatbotWidget';
+import SupportConsoleView from './views/SupportConsoleView';
 
 function App() {
   const [currentUser,      setCurrentUser]      = useState(null);   // null = logged out
@@ -24,6 +26,7 @@ function App() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('thinxsense_chat_session_id');
     setCurrentUser(null);
     setShowLoginSummary(false);
     setCurrentView('home');
@@ -46,6 +49,7 @@ function App() {
       case 'users':      return <UsersView />;
       case 'gateways':   return <GatewaysView navigationTarget={navigationTarget} clearNavigationTarget={() => setNavigationTarget(null)} />;
       case 'thinxverse': return <ThinxVerseView onNavigate={handleNavigate} />;
+      case 'support':    return <SupportConsoleView />;
       default:           return <DashboardView onNavigate={handleNavigate} />;
     }
   };
@@ -74,6 +78,7 @@ function App() {
           onDismiss={() => setShowLoginSummary(false)}
         />
       )}
+      <ChatbotWidget />
     </div>
   );
 }

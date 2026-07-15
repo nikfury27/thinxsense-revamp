@@ -12,6 +12,7 @@ const Sidebar = ({ currentView, onViewChange, currentUser, onLogout }) => {
     { id: 'alerts',     label: 'Alerts',     icon: 'notifications_active' },
     { id: 'users',      label: 'Users',      icon: 'person' },
     { id: 'gateways',   label: 'Gateways',   icon: 'router' },
+    { id: 'support',    label: 'Support Chat', icon: 'support_agent' },
   ];
 
   return (
