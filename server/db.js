@@ -179,5 +179,13 @@ export const db = {
     data.messages.push(newMsg);
     writeDB(data);
     return newMsg;
+  },
+
+  deleteMessages(sessionId) {
+    const data = readDB();
+    const filtered = data.messages.filter(m => m.session_id !== sessionId);
+    data.messages = filtered;
+    writeDB(data);
+    return true;
   }
 };

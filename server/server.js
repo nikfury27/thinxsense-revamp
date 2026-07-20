@@ -566,6 +566,50 @@ app.get('/api/support/messages/:session_id', (req, res) => {
   return res.json({ messages });
 });
 
+// POST /api/support/logout-clear - Ends session, releases agent, and deletes message history on logout
+app.post('/api/support/logout-clear', async (req, res) => {
+  const { session_id } = req.body;
+  if (!session_id) return res.status(400).json({ error: 'Missing session_id' });
+
+  console.log(`[LOGOUT] Clearing chat history & resolving agent for session: ${session_id}`);
+
+  // 1. Resolve active escalation mapping (free agent)
+  const escalation = db.getEscalationBySession(session_id);
+  if (escalation) {
+    db.deleteEscalationBySession(session_id);
+    await sendWhatsAppMessage(escalation._id, `🛑 *[SESSION TERMINATED]*\n\nThe user logged out. The session is closed and you are now free.`);
+    
+    // Pull next queued user
+    const nextSessionId = db.popFromQueue();
+    if (nextSessionId) {
+      await sendWhatsAppMessage(escalation._id, `⚠️ *[NEW SUPPORT REQUEST]*\n\nUser Session ID: \`${nextSessionId}\` has escalated the chat. Type any message to reply to the user. Type \`/end\` to close the session.`);
+      
+      const connectMsg = db.saveMessage({
+        session_id: nextSessionId,
+        sender: 'BOT',
+        text: 'Connecting you to a human agent... Please hold.'
+      });
+      sendToClient(nextSessionId, { type: 'message', message: connectMsg, mode: 'HUMAN', queuePosition: 0 });
+
+      connectAgentToSession(nextSessionId, escalation._id);
+    }
+  }
+
+  // 2. Remove from queue if they were waiting
+  db.removeFromQueue(session_id);
+
+  // 3. Delete message history from database
+  db.deleteMessages(session_id);
+
+  // 4. Delete session itself
+  db.deleteSession(session_id);
+
+  // Notify support console that this session is closed/ended
+  broadcastToSupport({ type: 'session_ended', session_id });
+
+  return res.json({ success: true });
+});
+
 // POST /api/support/reply - Reply as Support Agent from web console
 app.post('/api/support/reply', async (req, res) => {
   const { session_id, text } = req.body;

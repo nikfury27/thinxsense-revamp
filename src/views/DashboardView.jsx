@@ -1,13 +1,145 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../api/apiService';
 
-const DashboardView = ({ onNavigate }) => {
+const DashboardView = ({ onNavigate, currentUser }) => {
   const [sensors, setSensors] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [trendWarnings, setTrendWarnings] = useState([]);
   const [batteryProjections, setBatteryProjections] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Personal Notes States
+  const [notes, setNotes] = useState([]);
+  const [newNoteText, setNewNoteText] = useState('');
+  const [priority, setPriority] = useState('medium');
+  const [remindOnLogin, setRemindOnLogin] = useState(true);
+  const [editingNoteId, setEditingNoteId] = useState(null);
+  const [editingText, setEditingText] = useState('');
+  const [noteFilter, setNoteFilter] = useState('active'); // 'active' | 'completed' | 'all'
+
+  // Load notes on mount / user change
+  useEffect(() => {
+    if (!currentUser) return;
+    const key = `thinxsense_personal_notes_${currentUser.username}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      setNotes(JSON.parse(stored));
+    } else {
+      // Pre-seed notes for demonstration
+      let initial = [];
+      if (currentUser.username === 'shwetha') {
+        initial = [
+          {
+            id: 1,
+            text: 'Double-check Cold Room 3 temperature readings at 10:00 AM.',
+            priority: 'high',
+            remindOnLogin: true,
+            completed: false,
+            createdAt: new Date(Date.now() - 2 * 3600000).toISOString()
+          },
+          {
+            id: 2,
+            text: 'Reboot Gateway GGWCL00060 if it remains offline.',
+            priority: 'medium',
+            remindOnLogin: true,
+            completed: false,
+            createdAt: new Date(Date.now() - 4 * 3600000).toISOString()
+          },
+          {
+            id: 3,
+            text: 'Prepare shift report for weekly review.',
+            priority: 'low',
+            remindOnLogin: false,
+            completed: true,
+            createdAt: new Date(Date.now() - 24 * 3600000).toISOString()
+          }
+        ];
+      } else if (currentUser.username === 'rajesh') {
+        initial = [
+          {
+            id: 1,
+            text: 'Inspect BLE sensor battery levels on Rack 2.',
+            priority: 'medium',
+            remindOnLogin: true,
+            completed: false,
+            createdAt: new Date(Date.now() - 1 * 3600000).toISOString()
+          },
+          {
+            id: 2,
+            text: 'Acknowledge the environmental excursion alarm for Room 2.',
+            priority: 'high',
+            remindOnLogin: true,
+            completed: false,
+            createdAt: new Date(Date.now() - 3 * 3600000).toISOString()
+          }
+        ];
+      }
+      setNotes(initial);
+      localStorage.setItem(key, JSON.stringify(initial));
+    }
+  }, [currentUser]);
+
+  const saveNotes = (updatedNotes) => {
+    setNotes(updatedNotes);
+    if (currentUser) {
+      localStorage.setItem(`thinxsense_personal_notes_${currentUser.username}`, JSON.stringify(updatedNotes));
+    }
+  };
+
+  const handleAddNote = (e) => {
+    e.preventDefault();
+    if (!newNoteText.trim()) return;
+
+    const newNote = {
+      id: Date.now(),
+      text: newNoteText.trim(),
+      priority,
+      remindOnLogin,
+      completed: false,
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [newNote, ...notes];
+    saveNotes(updated);
+    setNewNoteText('');
+    setPriority('medium');
+    setRemindOnLogin(true);
+  };
+
+  const handleToggleComplete = (id) => {
+    const updated = notes.map(n => n.id === id ? { ...n, completed: !n.completed } : n);
+    saveNotes(updated);
+  };
+
+  const handleDeleteNote = (id) => {
+    const updated = notes.filter(n => n.id !== id);
+    saveNotes(updated);
+  };
+
+  const handleStartEdit = (note) => {
+    setEditingNoteId(note.id);
+    setEditingText(note.text);
+  };
+
+  const handleSaveEdit = (id) => {
+    if (!editingText.trim()) return;
+    const updated = notes.map(n => n.id === id ? { ...n, text: editingText.trim() } : n);
+    saveNotes(updated);
+    setEditingNoteId(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingNoteId(null);
+  };
+
+  const filteredNotes = React.useMemo(() => {
+    return notes.filter(note => {
+      if (noteFilter === 'active') return !note.completed;
+      if (noteFilter === 'completed') return note.completed;
+      return true;
+    });
+  }, [notes, noteFilter]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -111,15 +243,15 @@ const DashboardView = ({ onNavigate }) => {
         </button>
       </div>
 
-      {/* Proactive Diagnostics & Predictive swaps (New Feature) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Proactive Diagnostics, Predictive swaps & Personal Notes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Trend Warning Card */}
-        <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col">
+        <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between min-h-[340px]">
           <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
             <span className="material-symbols-outlined text-orange-500 font-bold">trending_up</span>
             Early Warning: Temperature Trend Risks
           </h3>
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 space-y-3 overflow-y-auto max-h-[220px] pr-1 scrollbar-thin">
             {loading ? (
               <div className="animate-pulse space-y-2 py-1">
                 <div className="h-10 bg-outline-variant rounded w-full"></div>
@@ -136,7 +268,7 @@ const DashboardView = ({ onNavigate }) => {
                     >
                       {sensor.id} (Group: {sensor.group})
                     </button>
-                    <span className="text-on-surface-variant block mt-0.5">
+                    <span className="text-on-surface-variant block mt-0.5 text-[10px]">
                       📍 {sensor.facilityLocation && sensor.facilityLocation !== 'Not Specified' ? `${sensor.facilityLocation}, ${sensor.location}` : sensor.location}
                     </span>
                   </div>
@@ -151,12 +283,12 @@ const DashboardView = ({ onNavigate }) => {
         </div>
 
         {/* Battery Swap Projections Card */}
-        <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col">
+        <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between min-h-[340px]">
           <h3 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
             <span className="material-symbols-outlined text-red-500 font-bold">battery_alert</span>
             Predictive swaps: Approaching Depletion
           </h3>
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 space-y-3 overflow-y-auto max-h-[220px] pr-1 scrollbar-thin">
             {loading ? (
               <div className="animate-pulse space-y-2 py-1">
                 <div className="h-10 bg-outline-variant rounded w-full"></div>
@@ -173,7 +305,7 @@ const DashboardView = ({ onNavigate }) => {
                     >
                       {proj.id} ({proj.type === 'sensor' ? 'Sensor' : 'Gateway'})
                     </button>
-                    <span className="text-on-surface-variant block mt-0.5">
+                    <span className="text-on-surface-variant block mt-0.5 text-[10px]">
                       📍 {proj.location}
                     </span>
                   </div>
@@ -185,6 +317,197 @@ const DashboardView = ({ onNavigate }) => {
               ))
             )}
           </div>
+        </div>
+
+        {/* Personal Notes & Checklist Card */}
+        <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between min-h-[340px]">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-sm text-primary flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary font-bold">push_pin</span>
+              My Notes & Reminders
+            </h3>
+            <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold">
+              {notes.filter(n => !n.completed).length} Active
+            </span>
+          </div>
+
+          {/* Quick Filters */}
+          <div className="flex gap-2 mb-3 text-[10px] border-b border-outline-variant/40 pb-2">
+            {['active', 'completed', 'all'].map((f) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setNoteFilter(f)}
+                className={`capitalize font-bold px-2 py-0.5 rounded-full border transition-all ${
+                  noteFilter === f
+                    ? 'bg-primary border-primary text-white shadow-sm'
+                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+
+          {/* List area */}
+          <div className="flex-1 overflow-y-auto space-y-2 pr-1 mb-3 max-h-[160px] scrollbar-thin">
+            {filteredNotes.length === 0 ? (
+              <div className="text-center py-6 text-slate-400 text-xs italic">
+                {noteFilter === 'active' 
+                  ? 'No pending reminders. Write one below!' 
+                  : noteFilter === 'completed' 
+                  ? 'No completed tasks yet.' 
+                  : 'Your reminders list is empty.'}
+              </div>
+            ) : (
+              filteredNotes.map(note => {
+                const isEditing = editingNoteId === note.id;
+                return (
+                  <div 
+                    key={note.id} 
+                    className={`group flex items-start gap-2.5 p-2.5 rounded-lg border transition-all duration-200 ${
+                      note.completed 
+                        ? 'bg-slate-50/70 border-slate-100/80 opacity-70' 
+                        : 'bg-white border-outline-variant/50 hover:border-primary/40'
+                    }`}
+                  >
+                    {/* Checkbox */}
+                    <button
+                      type="button"
+                      onClick={() => handleToggleComplete(note.id)}
+                      className="mt-0.5 shrink-0 text-slate-400 hover:text-primary transition-colors flex items-center justify-center focus:outline-none"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {note.completed ? 'check_box' : 'check_box_outline_blank'}
+                      </span>
+                    </button>
+
+                    {/* Note Content */}
+                    <div className="flex-1 min-w-0">
+                      {isEditing ? (
+                        <div className="flex items-center gap-1.5 w-full">
+                          <input
+                            type="text"
+                            value={editingText}
+                            onChange={e => setEditingText(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleSaveEdit(note.id)}
+                            className="flex-1 px-2 py-1 text-xs border border-primary rounded focus:outline-none bg-white font-body-md"
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveEdit(note.id)}
+                            className="p-1 text-status-success hover:bg-slate-50 rounded"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">done</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleCancelEdit}
+                            className="p-1 text-slate-400 hover:bg-slate-50 rounded"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">close</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className={`text-xs text-on-surface leading-snug break-words font-body-md ${note.completed ? 'line-through text-slate-400' : 'font-semibold'}`}>
+                            {note.text}
+                          </p>
+                          {/* Badges footer */}
+                          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase font-status-label ${
+                              note.priority === 'high' 
+                                ? 'bg-red-50 text-red-600 border border-red-200/50' 
+                                : note.priority === 'medium'
+                                ? 'bg-amber-50 text-amber-700 border border-amber-200/50'
+                                : 'bg-blue-50 text-blue-600 border border-blue-200/50'
+                            }`}>
+                              {note.priority}
+                            </span>
+                            {note.remindOnLogin && (
+                              <span className="flex items-center gap-0.5 text-[8px] text-amber-600 font-bold bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded">
+                                <span className="material-symbols-outlined text-[10px]">notifications_active</span>
+                                On Login
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action buttons (Visible on hover) */}
+                    {!isEditing && (
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          type="button"
+                          onClick={() => handleStartEdit(note)}
+                          className="p-0.5 text-slate-400 hover:text-primary rounded hover:bg-slate-50"
+                          title="Edit Note"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteNote(note.id)}
+                          className="p-0.5 text-slate-400 hover:text-error rounded hover:bg-slate-50"
+                          title="Delete Note"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">delete</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Add form */}
+          <form onSubmit={handleAddNote} className="space-y-2 mt-auto border-t border-outline-variant/40 pt-3 shrink-0">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={newNoteText}
+                onChange={e => setNewNoteText(e.target.value)}
+                placeholder="Add a note for yourself..."
+                className="flex-1 px-3 py-2 border border-outline-variant rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary bg-slate-50/50 focus:bg-white transition-all font-body-md"
+              />
+              <button
+                type="submit"
+                disabled={!newNoteText.trim()}
+                className="p-2 bg-primary text-white rounded-lg hover:bg-primary/95 transition-colors disabled:opacity-50 flex items-center justify-center shrink-0"
+              >
+                <span className="material-symbols-outlined text-[16px]">add</span>
+              </button>
+            </div>
+            
+            {/* Inline controls */}
+            <div className="flex items-center justify-between text-[10px] text-slate-500 pl-1">
+              <div className="flex items-center gap-2 font-body-md">
+                <span>Priority:</span>
+                <select
+                  value={priority}
+                  onChange={e => setPriority(e.target.value)}
+                  className="bg-transparent font-bold text-slate-700 outline-none cursor-pointer focus:underline"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+
+              <label className="flex items-center gap-1 cursor-pointer select-none font-body-md">
+                <input
+                  type="checkbox"
+                  checked={remindOnLogin}
+                  onChange={e => setRemindOnLogin(e.target.checked)}
+                  className="rounded text-primary focus:ring-primary w-3 h-3 cursor-pointer"
+                />
+                <span className="font-semibold text-slate-600">Remind on Login</span>
+              </label>
+            </div>
+          </form>
         </div>
       </div>
 

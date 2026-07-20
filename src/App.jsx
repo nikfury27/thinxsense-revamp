@@ -26,6 +26,14 @@ function App() {
   };
 
   const handleLogout = () => {
+    const sessionId = localStorage.getItem('thinxsense_chat_session_id');
+    if (sessionId) {
+      fetch('/api/support/logout-clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId })
+      }).catch(err => console.error('Error clearing chat history on logout:', err));
+    }
     localStorage.removeItem('thinxsense_chat_session_id');
     setCurrentUser(null);
     setShowLoginSummary(false);
@@ -42,7 +50,7 @@ function App() {
 
   const renderActiveView = () => {
     switch (currentView) {
-      case 'home':       return <DashboardView onNavigate={handleNavigate} />;
+      case 'home':       return <DashboardView onNavigate={handleNavigate} currentUser={currentUser} />;
       case 'groups':     return <GroupsView />;
       case 'sensors':    return <SensorsView navigationTarget={navigationTarget} clearNavigationTarget={() => setNavigationTarget(null)} />;
       case 'alerts':     return <AlertsView />;
@@ -50,7 +58,7 @@ function App() {
       case 'gateways':   return <GatewaysView navigationTarget={navigationTarget} clearNavigationTarget={() => setNavigationTarget(null)} />;
       case 'thinxverse': return <ThinxVerseView onNavigate={handleNavigate} />;
       case 'support':    return <SupportConsoleView />;
-      default:           return <DashboardView onNavigate={handleNavigate} />;
+      default:           return <DashboardView onNavigate={handleNavigate} currentUser={currentUser} />;
     }
   };
 

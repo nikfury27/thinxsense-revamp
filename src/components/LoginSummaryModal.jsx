@@ -203,12 +203,94 @@ const LoginSummaryModal = ({ onDismiss, currentUser }) => {
   const handoverNote = handoverNoteStore[currentUser.username] ?? null;
   const hasNote = !!handoverNote;
 
+  // Personal Notes logic
+  const [personalNotes, setPersonalNotes] = useState(() => {
+    if (!currentUser) return [];
+    const key = `thinxsense_personal_notes_${currentUser.username}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+    // Pre-seed matching DashboardView pre-seeding
+    let initial = [];
+    if (currentUser.username === 'shwetha') {
+      initial = [
+        {
+          id: 1,
+          text: 'Double-check Cold Room 3 temperature readings at 10:00 AM.',
+          priority: 'high',
+          remindOnLogin: true,
+          completed: false,
+          createdAt: new Date(Date.now() - 2 * 3600000).toISOString()
+        },
+        {
+          id: 2,
+          text: 'Reboot Gateway GGWCL00060 if it remains offline.',
+          priority: 'medium',
+          remindOnLogin: true,
+          completed: false,
+          createdAt: new Date(Date.now() - 4 * 3600000).toISOString()
+        },
+        {
+          id: 3,
+          text: 'Prepare shift report for weekly review.',
+          priority: 'low',
+          remindOnLogin: false,
+          completed: true,
+          createdAt: new Date(Date.now() - 24 * 3600000).toISOString()
+        }
+      ];
+    } else if (currentUser.username === 'rajesh') {
+      initial = [
+        {
+          id: 1,
+          text: 'Inspect BLE sensor battery levels on Rack 2.',
+          priority: 'medium',
+          remindOnLogin: true,
+          completed: false,
+          createdAt: new Date(Date.now() - 1 * 3600000).toISOString()
+        },
+        {
+          id: 2,
+          text: 'Acknowledge the environmental excursion alarm for Room 2.',
+          priority: 'high',
+          remindOnLogin: true,
+          completed: false,
+          createdAt: new Date(Date.now() - 3 * 3600000).toISOString()
+        }
+      ];
+    }
+    return initial;
+  });
+
+  const savePersonalNotes = (updated) => {
+    setPersonalNotes(updated);
+    if (currentUser) {
+      localStorage.setItem(`thinxsense_personal_notes_${currentUser.username}`, JSON.stringify(updated));
+    }
+  };
+
+  const handleTogglePersonalComplete = (id) => {
+    const updated = personalNotes.map(n => n.id === id ? { ...n, completed: !n.completed } : n);
+    savePersonalNotes(updated);
+  };
+
+  const handleDeletePersonalNote = (id) => {
+    const updated = personalNotes.filter(n => n.id !== id);
+    savePersonalNotes(updated);
+  };
+
+  const activePersonalNotes = personalNotes.filter(n => !n.completed);
+  const remindPersonalNotes = activePersonalNotes.filter(n => n.remindOnLogin);
+  const hasActiveReminders = remindPersonalNotes.length > 0;
+
   const tabs = [
     { id: 'overview', label: 'Overview' },
     { id: 'alerts',   label: `Alerts (${ALERTS.length})` },
     { id: 'offline',  label: `Offline (${OFFLINE_SENSORS.length})` },
     { id: 'issues',   label: `Issues (${ACTIVE_EXCURSIONS.length + BATTERY_WARNINGS.length})` },
     { id: 'handover', label: 'Handover', badge: hasNote },
+    { id: 'my-notes', label: `My Notes (${activePersonalNotes.length})`, badge: hasActiveReminders }
   ];
 
   // Calculate Away Period Hours
@@ -614,6 +696,36 @@ const LoginSummaryModal = ({ onDismiss, currentUser }) => {
             {/* ── Tab: Overview ── */}
             {tab === 'overview' && (
               <>
+                {/* Personal Reminders Callout Banner */}
+                {remindPersonalNotes.length > 0 && (
+                  <div className="bg-primary/5 border border-primary/20 rounded-xl p-3.5 space-y-2 relative overflow-hidden shadow-sm animate-fadeIn">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
+                    <div className="flex items-center justify-between pl-2">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-primary text-[18px]">push_pin</span>
+                        <h4 className="font-bold text-xs text-on-surface">Your Personal Reminders for Today</h4>
+                      </div>
+                      <span className="text-[9px] bg-primary text-white px-2 py-0.5 rounded-full font-bold">
+                        {remindPersonalNotes.length} Pending
+                      </span>
+                    </div>
+                    
+                    <div className="pl-2 space-y-2 max-h-[120px] overflow-y-auto scrollbar-thin pr-1 mt-1">
+                      {remindPersonalNotes.map(n => (
+                        <div key={n.id} className="flex items-start gap-2 bg-white border border-slate-100 rounded-lg p-2 text-xs shadow-sm">
+                          <span className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
+                            n.priority === 'high' ? 'bg-red-500 animate-pulse' : n.priority === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
+                          }`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-slate-700 leading-normal font-semibold font-body-md break-words">{n.text}</p>
+                            <span className="text-[8px] text-slate-400 font-mono mt-0.5 block capitalize">Priority: {n.priority}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <Section icon="bar_chart" title="Facility Summary">
                   <div className="grid grid-cols-5 gap-1.5">
                     <Stat label="New"       value={ALERTS.length}             color="text-error" />
@@ -728,6 +840,79 @@ const LoginSummaryModal = ({ onDismiss, currentUser }) => {
                     </div>
                   </div>
                 )}
+              </Section>
+            )}
+
+            {/* ── Tab: My Notes ── */}
+            {tab === 'my-notes' && (
+              <Section icon="push_pin" title="My Notes & Reminders">
+                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin">
+                  {personalNotes.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-10 gap-2 text-center bg-slate-50 border border-slate-100 rounded-xl">
+                      <span className="material-symbols-outlined text-[32px] text-secondary">notes</span>
+                      <div className="font-semibold text-xs text-on-surface">No personal notes</div>
+                      <div className="text-[10px] text-secondary max-w-xs font-body-md">
+                        You have not created any personal notes. You can create them on the Dashboard.
+                      </div>
+                    </div>
+                  ) : (
+                    personalNotes.map(n => (
+                      <div 
+                        key={n.id} 
+                        className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs transition-all ${
+                          n.completed 
+                            ? 'bg-slate-50/70 border-slate-100 text-secondary opacity-70'
+                            : 'bg-white border-outline-variant/60 text-on-surface shadow-sm hover:border-primary/30'
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePersonalComplete(n.id)}
+                          className="mt-0.5 shrink-0 text-slate-400 hover:text-primary transition-colors flex items-center justify-center focus:outline-none"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">
+                            {n.completed ? 'check_box' : 'check_box_outline_blank'}
+                          </span>
+                        </button>
+                        
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-semibold font-body-md leading-relaxed break-words ${n.completed ? 'line-through text-slate-400' : 'text-slate-800'}`}>
+                            {n.text}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase font-status-label ${
+                              n.priority === 'high' 
+                                ? 'bg-red-50 text-red-600 border border-red-200/50' 
+                                : n.priority === 'medium'
+                                ? 'bg-amber-50 text-amber-700 border border-amber-200/50'
+                                : 'bg-blue-50 text-blue-600 border border-blue-200/50'
+                            }`}>
+                              {n.priority}
+                            </span>
+                            {n.remindOnLogin && (
+                              <span className="flex items-center gap-0.5 text-[8px] text-amber-600 font-bold bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded">
+                                <span className="material-symbols-outlined text-[10px]">notifications_active</span>
+                                Remind on Login
+                              </span>
+                            )}
+                            <span className="text-[8px] text-slate-400 font-mono ml-auto">
+                              Created {new Date(n.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeletePersonalNote(n.id)}
+                          className="text-slate-400 hover:text-error transition-colors p-0.5 rounded hover:bg-slate-50 shrink-0 self-center"
+                          title="Delete Note"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">delete</span>
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
               </Section>
             )}
 
